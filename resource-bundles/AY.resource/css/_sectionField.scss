@@ -1,0 +1,198 @@
+$labelWidth:170px;
+$labelHeight: 25px;
+$fieldHeight: 25px;
+
+.aptoField {
+    padding:6px 0px 6px 0px;
+    display: inline-block;
+    margin: 5px 0px 5px 0px;
+    padding: 3px;
+    white-space: nowrap;
+
+    &.requiredInput:before{
+        position: relative;
+        display: inline-block;
+        float: left;
+        content:"";
+        border-left: 3px solid #c00;
+        height: 17px;
+        margin-top: 3px;
+    }
+
+    & input {
+        margin: 0px;
+        border: solid 1px #dddddd;
+        border-radius: 5px 5px 5px 5px;
+        -moz-border-radius: 5px 5px 5px 5px;
+        -webkit-border-radius: 5px 5px 5px 5px;
+
+        &, &:focus {
+            outline: none;
+        }
+
+        &:focus {
+            border-color: #66afe9;
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
+        }
+    }
+
+    & input, select {
+        height: 22px;
+    }
+    & select {
+        background: #fff;
+    }
+
+    .alignRight {
+        text-align: right;
+    }
+}
+
+/* div.aptoField{
+
+    text-align: right;
+    padding-left: 10px;
+    padding-right: 10px;
+    position: relative;
+    display: inline-block;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+
+    &.required {
+        &:before{
+            position:relative;
+            display: inline-block;
+            float: left;
+            content:"";
+            border-left: 3px solid #c00;
+            padding-left: 3px;
+            height: 17px;
+            margin-top: 2px
+        }
+    }
+
+    & input {
+        float: left;
+        display: inline-block;
+        position: relative;
+        margin: auto;
+
+        &:focus{
+            outline: none;
+        }
+
+        &.ng-invalid {
+            /*border-color: #c00;
+            border-width: 2px;* /
+            outline: solid;
+            outline-color: #c00;
+            outline-width: 2px;
+
+            &:focus {
+                outline: solid;
+                outline: solid;
+                outline-color: #c00;
+                outline-width: 2px;
+            }
+        }
+    }
+
+    & text-output p{
+        padding: 0px;
+        margin: 0px;
+    }
+    & div.errorMsg span{
+        display: inline-block;
+        position: relative;
+        float: left;
+
+        & div {
+            color: #c00;
+            font-family: "arial","sans-serif";
+            margin-top: 2px;
+            font-size: 12px;
+        }
+    }
+}
+
+div.aptoFieldLabel {
+    width:$labelWidth;
+    max-width: $labelWidth;
+    float: left;
+    text-align: right;
+    padding-left: 10px;
+    padding-right: 10px;
+    position: relative;
+    display: block;
+    top: 50%;
+    overflow: visible;
+
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+
+
+
+    & label.aptoField {
+
+        margin-top: auto;
+        margin-bottom: auto;
+
+        width: $labelWidth;
+        margin-right: 10px;
+        font-weight: bold;
+        font-family: "arial", "sans-serif";
+        font-size: 12px;
+        align: right;
+
+        margin: auto;
+        top: 0; left: 0; bottom: 0; right: 0;
+    }
+} */
+
+div.contentSection {
+        padding-bottom: 30px;
+}
+div.sectionField {
+    height: 25px;
+    float: left;
+    display: inline-block;
+    width: 50%;
+    & ng-form {
+
+
+        & div {
+            position: relative;
+            display: inline-block;
+
+        }
+
+    }
+}
+
+
+input.ng-invalid {
+
+}
+
+
+.current.has-error {
+    background-color: blue;
+}
+
+h4.sectionTitle {
+    font-family: "arial";
+    font-size: 14px;
+}
+
+div.sectionHeader {
+    background-color: #fff;
+    border-bottom: 2px solid #007bb4;
+    margin-bottom: 10px;
+}
+
+.requiredBlock {
+    display:inline-block;
+}

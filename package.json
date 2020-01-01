@@ -1,0 +1,36 @@
+{
+  "name": "clarity",
+  "main": "Gruntfile.js",
+  "description": "Best practices for development",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://jknisley@github.com/aptotude/ay-project-clarity.git"
+  },
+  "author": "Apto",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aptotude/ay-project-clarity/issues"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true
+    }
+  },
+  "homepage": "https://github.com/aptotude/ay-project-clarity#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "compass": "^0.1.1",
+    "grunt": "^1.0.1",
+    "grunt-cli": "^1.2.0",
+    "grunt-contrib-compass": "^1.1.1",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-eslint": "^19.0.0",
+    "grunt-mocha-test": "^0.13.2",
+    "lodash": "^4.17.4",
+    "mocha": "^3.2.0"
+  }
+}

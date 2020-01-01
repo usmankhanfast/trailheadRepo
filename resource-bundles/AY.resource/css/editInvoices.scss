@@ -1,0 +1,301 @@
+$border-color: #ccccdf;
+
+body {
+    .bPageBlock {
+        background-color: white;
+        border-width: 0;
+
+        &.secondaryPalette {
+            @extend .bPageBlock;
+        }
+    }
+}
+
+fieldset {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+.bPageTitle {
+    .pageTitleIcon {
+        display: none;
+    }
+
+    .pageType, .pageDescription {
+        margin-left: 0 !important;
+    }
+}
+
+.pageButtons {
+    text-align: center;
+}
+
+.actionLinks {
+    border-right: 1px solid $border-color;
+    min-width: 60px;
+
+    .actionLink {
+        display: block;
+        padding: 2px;
+        min-width: 20px;
+        text-align: center;
+    }
+}
+
+.sectionHeader {
+    font-weight: bold;
+}
+
+.invoiceTable {
+    display: table;
+
+    &.parentInvoiceTable {
+        margin: 5px;
+        border: 2px solid $border-color;
+        width: 100%;
+
+        >.invoiceTableRow {
+            >.invoiceTableCell {
+                border-bottom: 1px solid $border-color;
+            }
+            &:last-child {
+                >.invoiceTableCell {
+                    border-bottom: none;
+                }
+            }
+        }
+    }
+
+    .label {
+        text-align: right;
+    }
+}
+
+.invoiceTableRow {
+    display: table-row;
+    height: 30px;
+}
+
+.invoiceTableCell {
+    display: table-cell;
+    padding: 0 5px;
+    vertical-align: middle;
+    white-space: nowrap;
+
+    &.labelCol {
+        padding-left: 10px;
+    }
+
+    &.voided {
+        background-image: url(../images/voidedInvoiceBackground.jpg);
+        cursor: not-allowed;
+
+        * {
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+    }
+
+    .dateOnlyInput {
+        input {
+            width: 125px;
+        }
+    }
+}
+
+.invoiceDetailsTable {
+    margin-top: 15px;
+
+    label {
+        vertical-align: middle;
+        float: right;
+    }
+
+    tr td:first-child, tr td:nth-child(3) {
+        min-width: 150px;
+    }
+}
+
+.paymentsContainer {
+    border: 1px solid $border-color;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.paymentsTable {
+    width: 100%;
+
+    .headerRow {
+        th {
+            white-space: normal;
+        }
+    }
+
+    .dataCell {
+        padding: 0 10px 0 5px;
+    }
+
+    tr.dataRow {
+        line-height: 26px;
+
+        .dataCell .requiredInput .requiredBlock {
+            margin: 3px 0;
+        }
+    }
+
+    .smallCell {
+        width: 20px;
+    }
+}
+
+.maxSize {
+    width: 100%;
+}
+
+.addInvoiceButton {
+    margin: 5px 8px;
+}
+
+.radioToggleTd {
+    table {
+        border-spacing: 0;
+
+        fieldset {
+            margin: 0;
+            padding: 0;
+
+            td {
+                @extend fieldset;
+
+                label {
+                    @extend td;
+                }
+            }
+        }
+
+        tbody {
+            display: block;
+        }
+
+        .dataCell {
+            padding: 0;
+        }
+
+        tr.dataRow {
+            line-height: 0;
+        }
+    }
+}
+
+.paymentsSummary {
+    display: table;
+    width: 100%;
+
+    div {
+        display: table-cell;
+
+        &.paymentTotals {
+            text-align: right;
+
+            .paymentLabels, .paymentValues {
+                display: inline-block;
+
+                div {
+                    display: block;
+                    margin: 2px;
+                }
+
+                .labelCol {
+                    padding: 2px;
+                }
+            }
+        }
+    }
+}
+
+.radioToggleContainer {
+    font-size: 0;
+    margin: 0 3px;
+    display: flex !important;
+}
+
+.note {
+    font-style: italic;
+}
+
+.commissionInputContainer {
+    display: table;
+
+    div {
+        display: table-cell;
+        vertical-align: middle;
+    }
+
+    input {
+        &[type="text"], &[type="number"] {
+            width: 70px;
+
+            &[disabled] {
+                background-color: lightgray;
+                border: 1px inset;
+                padding: 2px;
+            }
+        }
+    }
+}
+
+.unbilledGrossCommission {
+    color: green;
+
+    &.invalid {
+        color: red;
+    }
+}
+
+fieldset {
+    border-width: 0;
+}
+
+input[type=radio] {
+    display: none;
+}
+
+input[type=radio]+label {
+    min-width: 35px;
+    display: inline-block;
+    padding: 0;
+    margin-bottom: 0;
+    font-size: 11px;
+    line-height: 20px;
+    color: black;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background: white;
+    background-repeat: repeat-x;
+    border: 1px solid #cccccc;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff',
+        endColorstr='#ffe6e6e6', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px
+        rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px
+        rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px
+        rgba(0, 0, 0, 0.05);
+}
+
+input[type=radio]:checked+label {
+    color: white;
+    text-align: center;
+    background-image: none;
+    outline: 0;
+    -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px
+        rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px
+        rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px
+        rgba(0, 0, 0, 0.05);
+    background-color: #007bb4;
+}

@@ -1,0 +1,13 @@
+<apex:page controller="QuickbookCon">
+<apex:slds />
+<apex:form id="theForm" >
+<apex:pageblock >
+<apex:pageMessages ></apex:pageMessages>
+
+<apex:pageBlockButtons location="top">
+<apex:commandButton action="{!doAuthorizationQuickBooks}" value="Authorize" />
+<apex:commandButton action="{!doFetchAccessToken}" value="Complete Authorzation" reRender="theForm" />
+</apex:pageBlockButtons>
+</apex:pageblock>
+</apex:form>
+</apex:page>

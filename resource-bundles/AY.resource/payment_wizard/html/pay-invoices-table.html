@@ -1,0 +1,89 @@
+<div class="table-wrap">
+    <table class="invoiceTable" ng-if="contextInvoices">
+        <thead>
+            <tr>
+                <td>
+                    {{labels.dealId}}
+                </td>
+                <td>
+                    {{labels.invoiceNumber}}
+                </td>
+                <td>
+                    {{labels.billTo}}
+                </td>
+                <td>
+                    {{labels.dueDate}}
+                </td>
+                <td>
+                    Subtotal
+                </td>
+                <td>
+                    {{labels.taxes}}
+                </td>
+                <td>
+                    {{labels.total}}
+                </td>
+                <td>
+                    {{labels.amountPaid}}
+                </td>
+                <td>
+                    {{labels.trust}}
+                </td>
+                <td>
+                    {{labels.balance}}
+                </td>
+                <td>
+                    {{labels.paymentAmount}}
+                </td>
+                <td>
+                    {{labels.allocationStatus}}
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="invoice in contextInvoices"
+                ng-mousedown="setSelectedInvoice(invoice)">
+                <td>
+                    {{invoice.dealId.displayValue}}
+                </td>
+                <td>
+                    {{invoice.invoiceNumber.displayValue}}
+                </td>
+                <td>
+                    {{invoice.nsBillTo.displayValue}}
+                </td>
+                <td>
+                    <date-field field="invoice.dueDate"
+                                readonly="true"
+                                />
+                </td>
+                <td>
+                    <currency-output field="invoice.subTotal" />
+                </td>
+                <td>
+                    <currency-output field="invoice.totalTaxes" />
+                </td>
+                <td>
+                    <currency-output field="invoice.totalDue" />
+                </td>
+                <td>
+                    <currency-output field="invoice.amountPaid" />
+                </td>
+                <td>
+                    <currency-output field="invoice.trustAmountRemaining" />
+                </td>
+                <td>
+                    <currency-output field="invoice.realBalanceDue" />
+                </td>
+                <td>
+                    <currency-field field="invoice.paymentAmount"
+                                    align-right="false" />
+                </td>
+                <td>
+                    <span ng-bind="invoice.status"
+                          ng-class="{redText : invoice.status !== 'Ready'}"></span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

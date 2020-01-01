@@ -1,0 +1,640 @@
+<div ng-if="contextInvoices.length == 0">
+    <div class="header">
+        {{labels.noInvoices}}
+    </div>
+</div>
+
+<div class="section-header" ng-if="contextInvoices">
+    <div>
+        <div class="header">
+            Pay Invoices
+        </div>
+        <div class="section allocationTotals">
+             <div class="allocationTotals">
+                 <table>
+                    <tr>
+                        <td style="text-align:right; font-weight: bold;">
+                            <span class="totalsLabel">Total Payments to Apply:</span>
+                        </td>
+                        <td>
+                            <span class="totalsValue">{{totalPayments | currency : currencySymbol}}</span><br />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:right; font-weight: bold;">
+                            <span class="totalsLabel">Unapplied Amount:</span>
+                        </td>
+                        <td>
+                            <span ng-class="{redText : selectedInvoice.unappliedAmount !== 0, totalsValue : true}">
+                                {{unappliedAmount | currency : currencySymbol}}
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="paymentInfo">
+                 <table>
+                    <tr>
+                        <td style="text-align:right" class="fontWeight">
+                            <span>{{name.label}}</span>
+                        </td>
+                        <td>
+                            <span>{{selectedPayments[0].name.value}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="textAlign, fontWeight">
+                            <span>{{paymentType.label}}:</span>
+                        </td>
+                        <td>
+                            <span>{{selectedPayments[0].paymentType.value}}</span><br />
+                        </td>     
+
+                        <td class="textAlign, fontWeight">
+                            <span>Number:</span>
+                        </td>
+                        <td>
+                            <span>{{selectedPayments[0].checkEFTNumber.value}}</span><br />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <br/>
+        <br/>
+    </div>
+    <div>
+        <hr/>
+    </div>
+
+    <div ng-include="payInvoicesTableTemplate"></div>
+
+    <span ng-show="!selectedInvoice">Click on the invoice to view the allocation details.</span>
+</div>
+
+<div ng-if="contextInvoices">
+
+    <div ng-show="selectedInvoice != null"
+         class="allocationDetails">
+
+         <div>
+            <div>
+                <h2>Payment Allocation Details - Invoice {{selectedInvoice.invoiceNumber.value}}</h2>
+                 <div class="allocationTotals">
+                     <table>
+                        <tr>
+                            <td style="text-align:right; font-weight: bold;">
+                                <span class="totalsLabel">Payment Amount:</span>
+                            </td>
+                            <td>
+                                <span class="totalsValue">{{selectedInvoice.paymentAmount.value | currency : currencySymbol}}</span><br />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:right; font-weight: bold;">
+                                <span class="totalsLabel">Unallocated Amount:</span>
+                            </td>
+                            <td>
+                                <span ng-class="{redText : selectedInvoice.unallocatedAmount !== 0, totalsValue : true}">
+                                    {{selectedInvoice.unallocatedAmount | currency : currencySymbol}}
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        <br/>
+        <br/>
+    </div>
+    <div>
+        <hr/>
+    </div>
+
+        <div>
+            <div ng-show="selectedInvoice.coBrokers.length <= 0 || !selectedInvoice.coBrokers">
+                No Co-Brokers on this deal.
+            </div>
+            <div ng-show="selectedInvoice.coBrokers && selectedInvoice.coBrokers.length > 0">
+                <div>
+                    <h2>{{labels.coBrokers}}</h2>
+                </div>
+                <div class="table-wrap">
+                    <table class="clientFeeShareTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    {{labels.coBroker}}
+                                </th>
+                                <th>
+                                    {{labels.coBrokerCompany}}
+                                </th>
+                                <th>
+                                    {{labels.netsuiteVendor}}
+                                </th>
+                                <th>
+                                    {{labels.dealTotal}}
+                                </th>
+                                <th>
+                                    {{labels.dealBalance}}
+                                </th>
+                                <th>
+                                    {{labels.dueForInvoice}}
+                                </th>
+                                <th>
+                                    {{labels.previousPayment}}
+                                </th>
+                                <th>
+                                    {{labels.paymentAllocated}}
+                                </th>
+                                <th>
+                                    {{labels.invoiceBalance}}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="coBroker in selectedInvoice.coBrokers">
+                                <td>
+                                    {{coBroker.brokerName}}
+                                </td>
+                                <td>
+                                    {{coBroker.brokerCompany}}
+                                </td>
+                                <td>
+                                    <netsuite-search-field field="coBroker.nsBillTo"
+                                                           endpoint="getNetSuiteData.getVendors"
+                                                           broker-id="selectedInvoice.primaryBrokerId"
+                                                           hide-help="true"
+                                                           on-field-change="handleChildPaymentAmountChange(selectedInvoice)"
+                                                           />
+                                </td>
+                                <td>
+                                    {{coBroker.total | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    {{coBroker.balance | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    {{coBroker.due | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    {{coBroker.previousPayment | currency : currencySymbol}}
+                                </td>
+                                <td ng-class="{'overAllocated': coBroker.isOverallocated}">
+                                    <currency-field field="coBroker.amount"
+                                                    align-right="true"
+                                                    on-field-change="handleChildPaymentAmountChange(selectedInvoice)"
+                                                    hide-help="true"
+                                                    precision="2"/>
+                                </td>
+                                <td>
+                                    {{coBroker.calculatedBalance | currency : currencySymbol}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div ng-show="selectedInvoice.clientFeeShare && selectedInvoice.clientFeeShare.length > 0">
+                <div>
+                    <h2>{{labels.clientFeeShare}}</h2>
+                </div>
+                <div class="table-wrap">
+                    <table class="clientFeeShareTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    {{labels.client}}
+                                </th>
+                                <th>
+                                    {{labels.clientCompany}}
+                                </th>
+                                <th>
+                                    {{labels.netsuiteVendor}}
+                                </th>
+                                <th>
+                                    {{labels.dealTotal}}
+                                </th>
+                                <th>
+                                    {{labels.dealBalance}}
+                                </th>
+                                <th>
+                                    {{labels.dueForInvoice}}
+                                </th>
+                                <th>
+                                    {{labels.previousPayment}}
+                                </th>
+                                <th>
+                                    {{labels.paymentAllocated}}
+                                </th>
+                                <th>
+                                    {{labels.invoiceBalance}}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="clientFeeShare in selectedInvoice.clientFeeShare">
+                                <td>
+                                    {{clientFeeShare.brokerName}}
+                                </td>
+                                <td>
+                                    {{clientFeeShare.brokerCompany}}
+                                </td>
+                                <td>
+                                    <netsuite-search-field field="clientFeeShare.nsBillTo"
+                                                           endpoint="getNetSuiteData.getVendors"
+                                                           broker-id="selectedInvoice.primaryBrokerId"
+                                                           hide-help="true"
+                                                           on-field-change="handleChildPaymentAmountChange(selectedInvoice)"/>
+                                </td>
+                                <td>
+                                    {{clientFeeShare.total | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    {{clientFeeShare.balance | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    {{clientFeeShare.due | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    {{clientFeeShare.previousPayment | currency : currencySymbol}}
+                                </td>
+                                <td ng-class="{'overAllocated': clientFeeShare.isOverallocated}">
+                                    <currency-field field="clientFeeShare.amount"
+                                                    align-right="true"
+                                                    hide-help="true"
+                                                    on-field-change="handleChildPaymentAmountChange(selectedInvoice)"
+                                                    precision="2" />
+                                </td>
+                                <td >
+                                    {{clientFeeShare.calculatedBalance | currency : currencySymbol}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div ng-show="selectedInvoice.ayBrokers.length <= 0 || !selectedInvoice.ayBrokers">
+                No AY Brokers on this deal.
+            </div>
+            <div ng-show="selectedInvoice.ayBrokers && selectedInvoice.ayBrokers.length > 0">
+                <div>
+                    <h2>{{labels.ayBrokers}}</h2>
+                </div>
+                <div class="table-wrap">
+                    <table class="ayBrokerTable" id="ayBrokerTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    {{labels.broker}}
+                                </th>
+                                <th>
+                                    {{labels.role}}
+                                </th>
+                                <th>
+                                    {{labels.preferentialSplit}}
+                                </th>
+                                <th>
+                                    {{labels.dealTotal}}
+                                </th>
+                                <th>
+                                    {{labels.dealBalance}}
+                                </th>
+                                <th>
+                                    {{labels.dueForInvoice}}
+                                </th>
+                                <th>
+                                    {{labels.previousPayment}}
+                                </th>
+                                <th>
+                                    {{labels.paymentAllocated}}
+                                </th>
+                                <th>
+                                    {{labels.invoiceBalance}}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="ayBroker in selectedInvoice.ayBrokers">
+                                <td>
+                                    {{ayBroker.brokerName}}
+                                </td>
+                                <td>
+                                    {{ayBroker.role}}
+                                </td>
+                                <td>
+                                    <input type="checkbox"
+                                           ng-model="ayBroker.usePreferentialSplit">
+                                    </input>
+                                    <span ng-show="ayBroker.usePreferentialSplit">
+                                        <text-field field="ayBroker.preferentialSplit"
+                                                    hide-help="true"
+                                                    precision="5">
+                                        </text-field>
+                                    </span>
+                                </td>
+                                <td>
+                                    {{ayBroker.total | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    {{ayBroker.balance | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    {{ayBroker.due | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    {{ayBroker.previousPayment | currency : currencySymbol}}
+                                </td>
+                                <td ng-class="{'overAllocated': ayBroker.isOverallocated}">
+                                    <currency-field field="ayBroker.amount"
+                                                    align-right="true"
+                                                    hide-help="true"
+                                                    on-field-change="handleAYChildPaymentAmountChange(selectedInvoice)"
+                                                    precision="2"
+                                                    />
+                                </td>
+                                <td>
+                                    {{ayBroker.calculatedBalance | currency : currencySymbol}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <!--div ng-show="selectedInvoice.superExpenses.length <= 0">
+                No Expenses on this deal.
+            </div>
+            <div ng-show="selectedInvoice.superExpenses && selectedInvoice.superExpenses.length > 0">
+                <div>
+                    <h2>{{labels.expenses}}</h2>
+                </div>
+                <div class="table-wrap">
+                    <table id="expensesTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    {{labels.type}}
+                                </th>
+                                <th>
+                                </th>
+                                <th>
+                                    {{labels.dealTotal}}
+                                </th>
+                                <th>
+                                    {{labels.dealBalance}}
+                                </th>
+                                <th>
+                                    {{labels.dueForInvoice}}
+                                </th>
+                                <th>
+                                    {{labels.previousPayment}}
+                                </th>
+                                <th>
+                                    {{labels.paymentAllocated}}
+                                </th>
+                                <th>
+                                    {{labels.invoiceBalance}}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="superExpense in selectedInvoice.superExpenses">
+                                <td>
+                                    {{superExpense.type}}
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                    {{superExpense.total | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    {{superExpense.balance | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    {{superExpense.due | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    {{superExpense.previousPayment | currency : currencySymbol}}
+                                </td>
+                                <td ng-class="{'overAllocated': superExpense.isOverallocated}">
+                                    <currency-field field="superExpense.amt"
+                                                    align-right="true"
+                                                    hide-help="true"
+                                                    on-field-change="handleChildExpenseAmountChange(superExpense, selectedInvoice)"
+                                                    precision="2"
+                                                    />
+                                <td>
+                                    {{superExpense.calculatedBalance | currency : currencySymbol}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div-->
+            <div ng-show="selectedInvoice.expenses && selectedInvoice.expenses.length > 0">
+                <div>
+                    <h2>{{labels.expenses}}</h2>
+                </div>
+                <div class="table-wrap">
+                    <table id="expensesTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    {{labels.type}}
+                                </th>
+                                <th>
+                                    {{labels.party}}
+                                </th>
+                                <th>
+                                    {{labels.dealTotal}}
+                                </th>
+                                <th>
+                                    {{labels.dealBalance}}
+                                </th>
+                                <th>
+                                    {{labels.dueForInvoice}}
+                                </th>
+                                <th>
+                                    {{labels.previousPayment}}
+                                </th>
+                                <th>
+                                    {{labels.paymentAllocated}}
+                                </th>
+                                <th>
+                                    {{labels.invoiceBalance}}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="expense in selectedInvoice.expenses">
+                                <td>
+                                    {{expense.type}}
+                                </td>
+                                <td>
+                                    {{expense.brokerName}}
+                                </td>
+                                <td>
+                                    {{expense.total | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    {{expense.balance | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    {{expense.due | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    {{expense.previousPayment | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    <currency-output field="expense.amount"
+                                                    hide-help="true"
+                                                    precision="2"
+                                                    />
+                                </td>
+                                <td>
+                                    {{expense.calculatedBalance | currency : currencySymbol}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div ng-show="selectedInvoice.taxes.length <= 0 || !selectedInvoice.taxes">
+                No Taxes on this deal.
+            </div>
+            <div ng-show="selectedInvoice.taxes && selectedInvoice.taxes.length > 0">
+                <div>
+                    <h2>{{labels.taxes}}</h2>
+                    <br/>
+                </div>
+                <div class="table-wrap">
+                    <table class="taxTable" id="taxTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    {{labels.type}}
+                                </th>
+                                <th>
+                                    {{labels.amount}}
+                                </th>
+                                <th>
+                                    {{labels.unrecoveredAmount}}
+                                </th>
+                                <th>
+                                    {{labels.dueForInvoice}}
+                                </th>
+                                <th>
+                                    {{labels.previousPayment}}
+                                </th>
+                                <th>
+                                    {{labels.paymentAllocated}}
+                                </th>
+                                <th>
+                                    {{labels.invoiceBalance}}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="tax in selectedInvoice.taxes">
+                                <td>
+                                    {{tax.type}}
+                                </td>
+                                <td>
+                                    {{tax.total | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    {{tax.balance | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    {{tax.due | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    {{tax.previousPayment | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    <currency-output field="tax.amount"
+                                                     hide-help="true"
+                                                     precision="2"/>
+                                </td>
+                                <td>
+                                    {{tax.calculatedBalance | currency : currencySymbol}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!--div ng-show="selectedInvoice.actualTaxes.length <= 0 || !selectedInvoice.actualTaxes">
+                No Taxes on this deal.
+            </div>
+            <div ng-show="selectedInvoice.actualTaxes && selectedInvoice.actualTaxes.length > 0">
+                <div>
+                    <h2>{{labels.taxes}}</h2>
+                    <br/>
+                    The amount to allocate cannot be adjusted
+                </div>
+                <div class="table-wrap">
+                    <table class="taxTable" id="taxTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    {{labels.type}}
+                                </th>
+                                <th>
+                                    {{labels.amount}}
+                                </th>
+                                <th>
+                                    {{labels.unrecoveredAmount}}
+                                </th>
+                                <th>
+                                    {{labels.dueForInvoice}}
+                                </th>
+                                <th>
+                                    {{labels.previousPayment}}
+                                </th>
+                                <th>
+                                    {{labels.paymentAllocated}}
+                                </th>
+                                <th>
+                                    {{labels.invoiceBalance}}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="tax in selectedInvoice.actualTaxes">
+                                <td>
+                                    {{tax.type}}
+                                </td>
+                                <td>
+                                    {{tax.total | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    {{tax.balance | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    {{tax.due | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    {{tax.previousPayment | currency : currencySymbol}}
+                                </td>
+                                <td>
+                                    <currency-output field="tax.amount"
+                                                     hide-help="true"
+                                                     precision="2"/>
+                                </td>
+                                <td>
+                                    {{tax.calculatedBalance | currency : currencySymbol}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div-->
+        </div>
+     </div>
+</div>

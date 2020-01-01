@@ -1,0 +1,37 @@
+<apex:page sidebar="true" showHeader="true"> 
+ <style>
+    .activeTab {background-color: #236FBD; color:white; background-image:none}
+    .inactiveTab { background-color: lightgrey; color:black; background-image:none}
+    </style>
+            
+    <!-- Create Tab panel -->
+    <apex:tabPanel switchType="client" selectedTab="name2" id="AccountTabPanel"
+        tabClass="activeTab" inactiveTabClass="inactiveTab">
+        <apex:tab label="One" name="name1" id="tabOne">content for tab one</apex:tab>
+        <apex:tab label="Two" name="name2" id="tabTwo">content for tab two</apex:tab>
+    </apex:tabPanel>
+    <h1>Hello World</h1> 
+    
+    <apex:pageBlock title="A Block Title">
+        <apex:pageBlockSection title="A Section Title">
+            I'm three components deep!
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="A New Section">
+            This is another section.
+            <apex:pageBlockSectionItem >
+page BlockSection Item                
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="1">
+		{! $User.FirstName }  {! $User.LastName }
+({! $User.Username })
+            <p> Today's Date is {! TODAY() } </p>
+            <p> Next week it will be {! TODAY() + 7 } </p>
+<p>{! IF( CONTAINS('salesforce.com','force.com'),'Yep', 'Nope') }</p>
+({! IF($User.isActive, $User.Username, 'inactive') })
+
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+
+</apex:page>

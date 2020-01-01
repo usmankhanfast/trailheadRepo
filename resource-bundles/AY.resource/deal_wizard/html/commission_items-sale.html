@@ -1,0 +1,169 @@
+<div class="section-header" ng-show="isSummary">
+    <div class="header">{{::labels.commissionItems}}</div>
+    <a ng-hide="isRecordsLocked || isPrintMode || removeEditLink" ng-click="setPage('commissionItems')">
+        {{::labels.edit}}
+    </a>
+    <hr/>
+</div>
+<div ng-show="appName == 'editCommissionItems' && isApprovedDeal" class="notification warning">
+    <span ng-bind="labels.dealAlreadyApproved"/>
+</div>
+<h1>{{::labels.summary}}</h1>
+<hr />
+<div class="section">
+    <div class="row">
+        <div ng-if="acreage" class="cell labelCol vfLabelColTextWrap">
+            {{::acreage.label}}
+        </div>
+        <div ng-if="acreage" class="cell valueCol">
+            <text-field field="acreage"
+                readonly="isSummary"
+                hide-help="{{isSummary}}"
+                precision="2" />
+        </div>
+        <div ng-if="saleDate" class="cell labelCol vfLabelColTextWrap">
+            {{::saleDate.label}}
+        </div>
+        <div ng-if="saleDate" class="cell valueCol">
+            <date-field field="saleDate"
+                hide-help="{{isSummary}}"
+                readonly="isSummary"
+                hide-today-date="true"/>
+        </div>
+    </div>
+    <div class="row">
+        <div ng-if="squareFootage" class="cell labelCol vfLabelColTextWrap">
+            {{::squareFootage.label}}
+        </div>
+        <div ng-if="squareFootage" class="cell valueCol">
+            <text-field field="squareFootage"
+                hide-help="{{isSummary}}"
+                readonly="isSummary"
+                precision="0"/>
+        </div>
+        <div ng-if="salePrice" class="cell labelCol vfLabelColTextWrap">
+            {{::salePrice.label}}
+        </div>
+        <div ng-if="salePrice" class="cell valueCol">
+            <currency-field field="salePrice"
+                align-right="false"
+                hide-help="{{isSummary}}"
+                readonly="isSummary"
+                precision="2"></currency-field>
+        </div>
+    </div>
+</div>
+<h1>{{::labels.saleCommissionDetails}}</h1>
+<hr />
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th ng-hide="isSummary"></th>
+                <th>{{::commissionItems[0].description.label}}</th>
+                <th style="text-align:right">{{::commissionItems[0].amount.label}}</th>
+                <th>{{::labels.commissionType}}</th>
+                <th style="text-align:right">{{::labels.commission}}</th>
+                <th></th>
+                <th style="text-align:right">{{::labels.commissionAmount}}</th>
+            </tr>
+        </thead>
+        <tbody class="hide-help">
+            <tr ng-repeat="item in commissionItems | filter:{isFlaggedForDelete: false} track by $index">
+                <td ng-hide="isSummary">
+                    <a ng-click="deleteCommissionItem(item)">
+                        {{::labels.del}}
+                    </a>
+                </td>
+                <td>
+                    <text-field field="item.description"
+                                readonly="isSummary"
+                                hide-help="true"/>
+                </td>
+                <td style="text-align:right">
+                    <text-field field="item.amount"
+                                readonly="isSummary"
+                                hide-help="true"
+                                precision="2"/>
+                </td>
+                <td>
+                    <picklist-field field="item.rateType"
+                                    readonly="isSummary"
+                                    hide-help="true"/>
+                </td>
+                <td class="shortClass" style="text-align:right">
+                    <div ng-show="item.rateType.value != '% of Total'">
+                        <currency-field field="item.commissionRate"
+                                        hide-help="true"
+                                        readonly="isSummary"
+                                        precision="2"/>
+                    </div>
+                    <div ng-show="item.rateType.value == '% of Total'">
+                        <text-field field="item.commissionPercent"
+                                    readonly="isSummary"
+                                    hide-help="true"
+                                    precision="5"/>
+                    </div>
+                </td>
+                <td style="text-align:right">
+                    <div class="overrideCalculationsWrapper">
+                        <div class="overrideCalculations" ng-hide="item.overrideCalculations">
+                            <a href ng-click="overrideChecked(item)">
+                                <img ng-src="{{getImageBase()}}/Lock.png" alt="lock" title="lock" />
+                            </a>
+                        </div>
+                        <div class="overrideCalculations" ng-show="item.overrideCalculations">
+                            <a href ng-click="overrideChecked(item)">
+                                <img ng-src="{{getImageBase()}}/Unlock.png" alt="unlock" title="unlock" />
+                            </a>
+                        </div>
+                    </div>
+                </td>
+                <td class="shortClass" style="text-align:right">
+                    <currency-output field="item.commissionAmount"
+                                     ng-hide="item.overrideCalculations"
+                                     readonly="isSummary"
+                                     hide-help="true"
+                                     precision="2"></currency-output>
+                    <currency-field field="item.overrideCommissionAmount"
+                                     ng-show="item.overrideCalculations"
+                                     readonly="isSummary"
+                                     hide-help="true"
+                                     precision="2"></currency-field><br/>
+                </td>
+            </tr>
+            <tr ng-hide="isSummary" class="footer">
+                <td colspan="100%">
+                    <a ng-click="addCommissionItem()">
+                        {{::labels.addItem}}
+                    </a>
+                </td>
+            </tr>
+            <tr class="totals-row">
+                <td ng-hide="isSummary"></td>
+                <td align="right">
+                    <label>
+                        {{::labels.totalConsideration}}:
+                    </label>
+                </td>
+                <td style="text-align:right">
+                    <currency-output field="totalConsideration"
+                        readonly="isSummary"
+                        hide-help="true"/>
+                </td>
+                <td align="right"></td>
+                <td></td>
+                <td style="text-align:right">
+                    <label>
+                        {{::labels.totalTotalCommission}}:
+                    </label>
+                </td>
+                <td style="text-align:right">
+                    <currency-output field="totalCommission"
+                        readonly="isSummary"
+                        hide-help="true"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

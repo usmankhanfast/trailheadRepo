@@ -1,0 +1,104 @@
+<div class="section-header" ng-show="isSummary">
+    <div class="header">
+        Expenses
+    </div>
+    <a ng-hide="isRecordsLocked || !showRPDealWizard || isPrintMode"
+        ng-click="setPage('expenses')">
+        Edit
+    </a>
+    <hr/>
+</div>
+<div class="details section">
+    <div class="table-wrap expenses-container">
+        <table ng-hide="isSummary && visibleHoldbacks.length == 0">
+            <thead>
+                <tr>
+                    <th ng-hide="isSummary"></th>
+                    <th ng-if="isSummary">
+                        {{::labels.type}}
+                    </th>
+                    <th ng-if="!isSummary">
+                        {{::labels.type}}*
+                    </th>
+                    <th style="text-align:right">
+                        {{::labels.amount}}
+                    </th>
+                    <th>
+                        {{::labels.description}}
+                    </th>
+                    <th>
+                        {{::labels.ayBrokers}}
+                    </th>
+                    <th>
+                        {{::labels.staffBonus}}
+                    </th>
+                    <th>
+                        {{::labels.bonusRecipient}}
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="hide-help">
+                <tr ng-repeat="holdback in visibleHoldbacks track by $index">
+                    <td ng-hide="isSummary">
+                        <a class="text-link"
+                            ng-class="{'disabled': holdback.id != null && holdback.canDelete == false}"
+                            ng-click="deleteHoldback(holdback)">
+                            {{::labels.del}}
+                        </a>
+                    </td>
+                    <td>
+                        <picklist-field hide-help="false"
+                                        field="holdback.type"
+                                        readonly="isSummary"
+                                        on-field-change="clearNonOTBEFields(holdback);" />
+                    </td>
+                    <td style="text-align:right">
+                        <text-field hide-help="true"
+                                    field="holdback.amount"
+                                    readonly="isSummary"
+                                    disabled="holdback.type.value == null"
+                                    precision="2"/>
+                    </td>
+                    <td>
+                        <text-field hide-help="true"
+                                    field="holdback.description"
+                                    disabled="holdback.type.value == null"
+                                    readonly="isSummary"/>
+                    </td>
+                    <td>
+                        <picklist-field field="holdback.broker"
+                                      hide-help="true"
+                                      disabled="holdback.type.value != holdback.otbeRecordTypeId"
+                                      readonly="isSummary"
+                                      on-field-change="clearBonusRecipient(holdback);"/>
+                    </td>
+                    <td>
+                        <boolean-field field="holdback.bonus"
+                                       hide-help="true"
+                                       disabled="holdback.type.value != holdback.otbeRecordTypeId || isSummary"
+                                       on-field-change="clearBonusRecipient(holdback);"/>
+                    </td>
+                    <td>
+                        <picklist-field field="holdback.bonusRecipient"
+                                        hide-help="true"
+                                        disabled="holdback.type.value != holdback.otbeRecordTypeId || !holdback.bonus.value || !holdback.broker.value"
+                                        readonly="isSummary"/>
+                    </td>
+                </tr>
+                <tr ng-hide="isSummary" class="footer">
+                    <td colspan="7">
+                        <a ng-click="addHoldback()">
+                            {{::labels.addItem}}
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div ng-show="isSummary && visibleHoldbacks.length == 0">
+            No Expenses
+        </div>
+        <div ng-show="!isSummary">
+            *{{::labels.typeHelp}}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,58 @@
+.aptoFieldContainer {
+    display: table;
+    width: 100%;
+
+    .cell {
+        display: table-cell;
+        padding: 0 5px;
+        vertical-align: middle;
+        white-space: nowrap;
+
+        &.labelCol {
+            padding-left: 50px;
+            width: 40%;
+        }
+
+        &.valueCol {
+            width: 60%;
+
+            > div {
+                display: inline-block;
+            }
+        }
+
+        &.linkCol {
+            text-align: center;
+        }
+    }
+
+    .helpOrb {
+        vertical-align: middle;
+    }
+}
+
+.help {
+    display: inline-block;
+    vertical-align: top;
+    width: 18px;
+    margin-top: 10px;
+    margin-left: -8px;
+}
+
+.hide-help .help {
+    width: 0;
+}
+
+.helpText {
+    border: 1px solid #959595;
+    z-index: 1000;
+
+    border-radius: 4px;
+    box-shadow: 1px 2px 3px #888;
+}
+
+.labelCol {
+    font-weight: bold;
+    font-size: 91%;
+    text-align: right;
+}

@@ -1,0 +1,279 @@
+<project name="AY ACES" basedir="." xmlns:sf="antlib:com.salesforce">
+    <import file="${basedir}/undeploy.xml"/>
+    <import file="${basedir}/exec_anon.xml"/>
+    <taskdef resource="com/salesforce/antlib.xml"
+             classPath="lib/ant-salesforce.jar"
+             uri="antlib:com.salesforce"/>
+    <taskdef resource="net/sf/antcontrib/antlib.xml"
+             classPath="lib/ant-contrib-1.0b3.jar"
+             uri="antlib:net.sf.antcontrib"/>
+
+    <property environment="env"/>
+
+    <target name="preBuild">
+      <echo message="Preparing deployment..."/>
+
+      <property name="environment" value="production"/>
+      <exec executable="yarn.cmd" osfamily="windows">
+        <arg value="install"/>
+      </exec>
+
+    <exec executable="yarn" osfamily="unix">
+        <arg value="install"/>
+      </exec>
+
+      <exec executable="grunt.cmd" outputproperty="gruntLog" osfamily="windows">
+        <arg value="${environment}"/>
+      </exec>
+
+      <exec executable="grunt" outputproperty="gruntLog" osfamily="unix">
+        <arg value="${environment}"/>
+      </exec>
+
+      <echo message="${gruntLog}"/>
+      <condition property="onSuccess">
+         <matches pattern="Done." string="${gruntLog}"/>
+      </condition>
+      <fail message="Grunt failed!" unless="onSuccess"/>
+
+      <exec executable="/bin/bash" osfamily="unix">
+        <arg value="resource-bundle-compiler.sh"/>
+      </exec>
+
+      <exec executable="${env.CYGWIN}\bash.exe" osfamily="windows">
+        <arg value="resource-bundle-compiler.sh"/>
+      </exec>
+    </target>
+
+    <target name="watch">
+      <exec executable="grunt.cmd" osfamily="windows">
+        <arg value="watch"/>
+      </exec>
+
+      <exec executable="grunt" osfamily="unix">
+        <arg value="watch"/>
+      </exec>
+    </target>
+
+    <!-- 
+    Before using ant, setup the following environment variables:
+
+    For your development sandbox:
+      ACES_DEV_USERNAME
+      ACES_DEV_PASSWORD
+      ACES_DEV_URL
+
+    For the test sandbox (claritydev)
+      ACES_TEST_USERNAME
+      ACES_TEST_PASSWORD
+      ACES_TEST_URL
+
+    Use ant -projecthelp in your terminal to get a quick list of commands
+    -->
+
+    <target name="deploy" description="Deploy to your dev org.">
+        <antcall target="preBuild"></antcall>
+        <echo message="Deploying as ..."/>
+        <sf:deploy username="mohammad.aboobakar@avisonyoung.com.cdevmo"
+                   password="Manchester09@"
+                   serverurl="test.salesforce.com"
+                   deployRoot="src"
+                   testLevel=""/>
+    </target>
+
+    <target name="deployWithTests" description="Deploy to your dev org and run all the tests">
+        <prop-require prop="env.ACES_DEV_USERNAME"/>
+        <prop-require prop="env.ACES_DEV_PASSWORD"/>
+        <prop-require prop="env.ACES_DEV_URL"/>
+        <antcall target="preBuild"></antcall>
+        <echo message="Deploying as ${env.ACES_DEV_USERNAME}..."/>
+        <sf:deploy username="${env.ACES_DEV_USERNAME}"
+                   password="${env.ACES_DEV_PASSWORD}"
+                   serverurl="${env.ACES_DEV_URL}"
+                   deployRoot="src"
+                   testLevel="RunLocalTests"/>
+    </target>
+
+    <target name="deployCustom" description="Deploy to any org using u (username), p (password), and url properties">
+        <prop-require prop="u"/>
+        <prop-require prop="p"/>
+        <prop-require prop="url"/>
+        <property name="u" value=""/>
+        <property name="p" value=""/>
+        <property name="url" value=""/>
+        <property name="testLevel" value="RunLocalTests"/>
+        <property name="checkOnly" value="true"/>
+        <echo message="Deploying as ${u}. Validate only = ${checkOnly}"/>
+        <sf:deploy username="${u}"
+                   password="${p}"
+                   serverurl="${url}"
+                   deployRoot="src"
+                   checkonly="${checkOnly}"
+                   testLevel="${testLevel}"
+                   pollWaitMillis="15000"
+                   maxPoll="500"
+                   />
+    </target>
+
+    <target name="retrieve" description="Retrieve the contents of src/package.xml from your dev org">
+        <prop-require prop="env.ACES_DEV_USERNAME"/>
+        <prop-require prop="env.ACES_DEV_PASSWORD"/>
+        <prop-require prop="env.ACES_DEV_URL"/>
+        <echo message="Retrieving from ${env.ACES_DEV_USERNAME}"/>
+        <sf:retrieve  username="${env.ACES_DEV_USERNAME}" 
+                      password="${env.ACES_DEV_PASSWORD}"
+                      serverurl="${env.ACES_DEV_URL}" 
+                      retrieveTarget="src"
+                      pollWaitMillis="11000"
+                      maxPoll="300"
+                      unpackaged="src/package.xml"/>
+    </target>
+
+    <target name="retrieveCustom" description="Retrieve from any org using u (username), p (password), and url properties">
+        <prop-require prop="u"/>
+        <prop-require prop="p"/>
+        <prop-require prop="url"/>
+        <property name="u" value=""/>
+        <property name="p" value=""/>
+        <property name="url" value=""/>
+        <sf:retrieve  username="${u}"
+                      password="${p}"
+                      serverurl="${url}"
+                      retrieveTarget="src"
+                      pollWaitMillis="11000"
+                      maxPoll="300"
+                      unpackaged="src/package.xml"/>
+    </target>
+
+    <target name="test" description="Run a validate against the test org">
+        <prop-require prop="env.ACES_TEST_USERNAME"/>
+        <prop-require prop="env.ACES_TEST_PASSWORD"/>
+        <prop-require prop="env.ACES_TEST_URL"/>
+        <antcall target="preBuild"></antcall>
+        <property name="org" value="1"/>
+        <echo message="Testing as ${env.ACES_TEST_USERNAME}..."/>
+        <sf:deploy username="${env.ACES_TEST_USERNAME}"
+                   password="${env.ACES_TEST_PASSWORD}"
+                   serverurl="${env.ACES_TEST_URL}"
+                   deployRoot="src"
+                   checkOnly="true"
+                   maxPoll="400"
+                   testLevel="RunLocalTests"/>
+    </target>
+
+    <target name="testCustom" description="Test any org using u (username), p (password), and url properties">
+        <property name="u" value=""/>
+        <property name="p" value=""/>
+        <property name="url" value=""/>
+        <prop-require prop="u"/>
+        <prop-require prop="p"/>
+        <prop-require prop="url"/>
+        <antcall target="preBuild"></antcall>
+        <property name="org" value="1"/>
+        <echo message="Testing as ${u}..."/>
+        <sf:deploy username="${u}"
+                   password="${p}"
+                   serverurl="${url}"
+                   deployRoot="src"
+                   checkOnly="true"
+                   maxPoll="400"
+                   testLevel="RunLocalTests"/>
+    </target>
+
+    <target name="unDeploy" description="Applies contents of /destructiveChanges to your dev org">
+        <prop-require prop="env.ACES_DEV_USERNAME"/>
+        <prop-require prop="env.ACES_DEV_PASSWORD"/>
+        <prop-require prop="env.ACES_DEV_URL"/>
+        <antcall target="confirmDeploy">
+          <param name="username" value="${env.ACES_DEV_USERNAME}"/>
+        </antcall>
+        <sf:deploy  username="${env.ACES_DEV_USERNAME}" 
+                    password="${env.ACES_DEV_PASSWORD}"
+                    serverurl="${env.ACES_DEV_URL}" 
+                    deployRoot="destructiveChanges"
+                    ignoreWarnings="true"
+                    />
+    </target>
+
+    <target name="unDeployCustom" description="Applies contents of /destructiveChanges to any org using u (username), p (password), and url properties">
+        <prop-require prop="u"/>
+        <prop-require prop="p"/>
+        <prop-require prop="url"/>
+        <antcall target="confirmDeploy">
+          <param name="username" value="${u}"/>
+        </antcall>
+        <property name="u" value=""/>
+        <property name="p" value=""/>
+        <property name="url" value=""/>
+        <sf:deploy  username="${u}"
+                    password="${p}"
+                    serverurl="${url}"
+                    deployRoot="destructiveChanges"
+                    ignoreWarnings="true"
+                    checkOnly="true"
+                    />
+    </target>
+
+    <target name="unDeployJenkins" description="Applies contents of /destructiveChanges to any org using u (username), p (password), and url properties">
+        <prop-require prop="u"/>
+        <prop-require prop="p"/>
+        <prop-require prop="url"/>
+        <property name="u" value=""/>
+        <property name="p" value=""/>
+        <property name="url" value=""/>
+        <property name="checkOnly" value="true"/>
+        <sf:deploy  username="${u}"
+                    password="${p}"
+                    serverurl="${url}"
+                    deployRoot="destructiveChanges"
+                    ignoreWarnings="true"
+                    checkOnly="${checkOnly}"
+                    />
+    </target>
+
+    <target name="deployLayoutsJenkins" description="Deploy layouts to any org using u (username), p (password), and url properties">
+        <prop-require prop="u"/>
+        <prop-require prop="p"/>
+        <prop-require prop="url"/>
+        <property name="u" value=""/>
+        <property name="p" value=""/>
+        <property name="url" value=""/>
+        <property name="checkOnly" value="true"/>
+        <echo message="Deploying as ${u}..."/>
+        <sf:deploy username="${u}"
+                   password="${p}"
+                   serverurl="${url}"
+                   deployRoot="layouts/src"
+                   checkOnly="${checkOnly}"
+                   testLevel=""/>
+    </target>
+
+    <target name="confirmDeploy">
+      <input validargs="y,n" addproperty="do.delete"
+          message="Deploying to ${username} Are you sure?"/>
+      <condition property="do.abort">
+          <equals arg1="n" arg2="${do.delete}"/>
+      </condition>
+      <fail if="do.abort">Deployment cancelled</fail>
+    </target>
+
+    <!-- Macro to require a property is not blank -->
+    <macrodef name="prop-require">
+        <attribute name="prop"/>
+        <sequential>
+            <fail message="Property &quot;@{prop}&quot; must be set">
+                <condition>
+                    <not>
+                        <isset property="@{prop}"/>
+                    </not>
+              </condition>
+            </fail>
+
+            <fail message="Property &quot;@{prop}&quot; must not be empty">
+                <condition>
+                    <equals arg1="${@{prop}}" arg2=""/>
+              </condition>
+            </fail>
+        </sequential>
+    </macrodef>
+</project>

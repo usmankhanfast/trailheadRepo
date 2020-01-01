@@ -1,0 +1,258 @@
+<div class="help" ng-if="hideHelp != 'true'" ng-include="getTemplate('helpIcon')" ng-hide="hideHelp || isSummary">
+    <ng-include="getTemplate('helpIcon')"/>
+</div>
+<div class="aptoField"
+     ng-class="{requiredInput: field.isRequired}"
+     ng-hide="readonly"
+     >
+    <div class="requiredBlock"
+        ng-if="field.isRequired"
+        >
+    </div>
+    <input type="hidden"
+           name="{{::baseId}}_lkid"
+           id="{{::baseId}}_lkid"
+           ng-model="field.value" />
+    <span class="lookupInput">
+        <a id="{{::baseId}}_lkwgt"
+            onclick="setLastMousePosition(event)"
+            ng-click="doShowOverlay();"
+            title="{{::field.label}} Lookup (New Window)">
+               <img ng-src="{{getImageBase()}}/Lookup_Icon.png"
+                    alt="{{::field.label}} Lookup (New Window)"
+                    title="{{::field.label}} Lookup (New Window)" />
+        </a>
+        <input id="{{::baseId}}"
+               ng-click="doShowOverlay();"
+               maxlength="255"
+               style="cursor: pointer;"
+               name="{{::baseId}}"
+               ng-disabled="disabled"
+               size="20"
+               type="text"
+               tabindex="-1"
+               ng-model="field.displayValue"
+               ng-required="field.isRequired"
+               ng-change="field.value = ''"
+        />
+        <button class="clear-button" ng-show="field.value" ng-click="clearLookup()"></button>
+    </span>
+    <div class="modal"
+         ng-show="showOverlay"
+         ng-class="{'overlay' : showOverlay}">
+
+        <div class="modalContainer">
+            <div class="closeButton">
+                <a ng-click="doHideOverlay();"
+                   id="{{::baseId}}_lkwgt">
+                   <img ng-src="{{getImageBase()}}/Close.png"
+                        alt="Close"
+                        title="Close" />
+                </a>
+            </div>
+            <div class="title">
+                <div class="center inline-block">
+                    <span>
+                        NetSuite
+                        <span class="recordType">
+                            {{::field.recordTypeLabel}}
+                        </span>
+                         Search
+                    </span>
+                </div>
+            </div>
+            <div class="content float-left">
+                <div class="header">
+                    <div id="subsidiaryInfo"
+                         ng-show="subsidiaryInfo && !hideSubsidiary">
+                        <span class="labelCol vfLabelColTextWrap subsidiaryLabel">
+                            Subsidiary:
+                        </span>
+                        <span ng-bind="subsidiaryInfo"
+                              class="subsidiary"></span>
+                    </div>
+                    <div id="searchInput"
+                         ng-hide="isVendor">
+                        <span class="labelCol vfLabelColTextWrap">
+                            Search
+                        </span>
+                        <input
+                            class="aptoField valueCol"
+                            type="text"
+                            ng-model="field.displayValue"
+                            set-focus="!isVendor && showOverlay"
+                            />
+                    </div>
+
+                    <div ng-show="isVendor">
+                        <span class="labelCol vfLabelColTextWrap"
+                              style="width:100px; display:inline-block">
+                            Company Name
+                        </span>
+                        <input
+                            class="aptoField valueCol"
+                            type="text"
+                            ng-model="companyName"
+                            set-focus="isVendor && showOverlay"
+                            />
+                    </div>
+
+                    <div ng-show="isVendor">
+                        <span class="labelCol vfLabelColTextWrap"
+                              style="width:100px; display:inline-block">
+                            First Name
+                        </span>
+                        <input
+                            class="aptoField valueCol"
+                            type="text"
+                            ng-model="firstName"
+                            />
+                    </div>
+
+                    <div ng-show="isVendor">
+                        <span class="labelCol vfLabelColTextWrap"
+                              style="width:100px; display:inline-block">
+                            Last Name
+                        </span>
+                        <input
+                            class="aptoField valueCol"
+                            type="text"
+                            ng-model="lastName"
+                            />
+                    </div>
+                    <div ng-show="isVendorOnly">
+                        <span class="labelCol vfLabelColTextWrap"
+                              style="width:100px; display:inline-block">
+                            Entity ID
+                        </span>
+                        <input
+                            class="aptoField valueCol"
+                            type="text"
+                            ng-model="extId"
+                            />
+                    </div>
+                    <div ng-show="isVendorOnly">
+                        <span class="labelCol vfLabelColTextWrap"
+                              style="width:100px; display:inline-block">
+                            City
+                        </span>
+                        <input
+                            class="aptoField valueCol"
+                            type="text"
+                            ng-model="city"
+                            />
+                    </div>
+                    <div ng-show="isVendorOnly">
+                        <span class="labelCol vfLabelColTextWrap"
+                              style="width:100px; display:inline-block">
+                            State/Province
+                        </span>
+                        <input
+                            class="aptoField valueCol"
+                            type="text"
+                            ng-model="stateProvince"
+                            />
+                    </div>
+                    <div class="resultsLabel">
+                        <span>
+                            <h2>Search Results</h2>
+                        </span>
+                    </div>
+
+                    <div>
+                        <div ng-show="aptoError" class="notification error">
+                            <span ng-bind="aptoErrorMsg" style="white-space: pre-line;"></span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div ng-show="requireBroker && (!brokerId || !subsidiaryInfo)" class="notification error">
+                            <span ng-bind="requireBrokerMsg" style="white-space: pre-line;"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="searchContainer">
+                    <div id="searchResults">
+                        <div ng-show="isSearching">
+                            <span>
+                                Searching...
+                                <svg class="svg-icon spinner-sm spin" viewBox="0 0 1792 1792">
+                                    <path d="M526 1394q0 53-37.5 90.5t-90.5 37.5q-52 0-90-38t-38-90q0-53 37.5-90.5t90.5-37.5 90.5 37.5 37.5 90.5zm498 206q0 53-37.5 90.5t-90.5 37.5-90.5-37.5-37.5-90.5 37.5-90.5 90.5-37.5 90.5 37.5 37.5 90.5zm-704-704q0 53-37.5 90.5t-90.5 37.5-90.5-37.5-37.5-90.5 37.5-90.5 90.5-37.5 90.5 37.5 37.5 90.5zm1202 498q0 52-38 90t-90 38q-53 0-90.5-37.5t-37.5-90.5 37.5-90.5 90.5-37.5 90.5 37.5 37.5 90.5zm-964-996q0 66-47 113t-113 47-113-47-47-113 47-113 113-47 113 47 47 113zm1170 498q0 53-37.5 90.5t-90.5 37.5-90.5-37.5-37.5-90.5 37.5-90.5 90.5-37.5 90.5 37.5 37.5 90.5zm-640-704q0 80-56 136t-136 56-136-56-56-136 56-136 136-56 136 56 56 136zm530 206q0 93-66 158.5t-158 65.5q-93 0-158.5-65.5t-65.5-158.5q0-92 65.5-158t158.5-66q92 0 158 66t66 158z"></path>
+                                </svg>
+                            </span>
+                        </div>
+                        <div ng-show="results.length == 0 && errorMessage == null && !isSearching">
+                            <span>No Results Found</span>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="header-fixed" ng-show="errorMessage == null && !isSearching">
+                                <thead>
+                                    <tr>
+                                        <th style="display: none;">
+                                            Netsuite ID
+                                        </th>
+                                        <th ng-class="{vendorFieldsAdjustment:isVendorOnly}">
+                                            Company Name
+                                        </th>
+                                        <th ng-class="{vendorFieldsAdjustment:isVendorOnly}">
+                                            Address
+                                        </th>
+                                        <th ng-show="isVendorOnly"  class="vendorFieldsAdjustment">
+                                            Tax ID
+                                        </th>
+                                        <th ng-show="isVendorOnly" class="vendorFieldsAdjustment">
+                                            Entity ID
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody ng-show="results.length > 0">
+                                    <tr ng-repeat="result in results"
+                                        ng-click="select(result)"
+                                        >
+                                        <td style="display: none;">
+                                            <span ng-bind="result.id"/>
+                                        </td>
+                                        <td title="{{result.name}}" ng-class="{vendorFieldsAdjustment:isVendorOnly}">
+                                            <span ng-bind="result.name"/>
+                                        </td>
+                                        <td title="{{result.city}}" ng-class="{vendorFieldsAdjustment:isVendorOnly}">
+                                            <span ng-bind-html="result.htmlAddress"/>
+                                        </td>
+                                        <td title="{{result.taxId}}" ng-show="isVendorOnly" class="vendorFieldsAdjustment">
+                                            <span ng-bind-html="result.taxId"/>
+                                        </td>
+                                        <td title="{{result.extId}}" ng-show="isVendorOnly" class="vendorFieldsAdjustment">
+                                            <span ng-bind-html="result.extId"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="errorMessage" ng-show="errorMessage != null && !isSearching">
+                                <div><span ng-bind-html="errorCode"/></div>
+                                <div><span ng-bind-html="errorMessage"/></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="modalAction" class="buttons-container footer">
+                   <a  ng-show="isVendorOnly" class="button"
+                       href="mailto:{{emailTo}}?Subject=New%20NetSuite%20{{field.recordTypeLabel | capitalize}}%20US%3A%20{{companyName ? companyName : field.displayValue}} Subsidiary:{{subsidiaryInfo}}"
+                       >
+                       Request NetSuite Vendor - US
+                    </a>
+                    <a ng-show="isVendorOnly" class="button margin10"
+                       href="mailto:{{emailToSecondary}}?Subject=New%20NetSuite%20{{field.recordTypeLabel | capitalize}}%20CAN%3A%20{{companyName ? companyName : field.displayValue}} Subsidiary:{{subsidiaryInfo}}"
+                       >
+                       Request NetSuite Vendor - CA
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<text-output ng-show="readonly"
+             field="field"
+             hide-help="true"/>

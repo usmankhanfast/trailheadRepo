@@ -1,0 +1,17 @@
+<div class="help" ng-hide="readonly || hideHelp">
+    <ng-include="getTemplate('helpIcon')"/>
+</div>
+<div class="aptoField">
+    <span ng-if="field.type == 'PERCENT_TYPE'"
+        ng-bind="(field.value || field.displayValue) | percent: precision">
+    </span>
+    <span ng-if="field.type == 'CURRENCY_TYPE'"
+        ng-bind="(field.value || field.displayValue) | currency: field.currencySymbol">
+    </span>
+    <span ng-if="field.type == 'DECIMAL_TYPE'"
+        ng-bind="(field.value || field.displayValue) | number: precision">
+    </span>
+    <span class="wrapLongText" ng-if="!field.type || (field.type != 'PERCENT_TYPE' && field.type != 'CURRENCY_TYPE' && field.type != 'DECIMAL_TYPE')"
+        ng-bind-html="field.displayValue || (field.value && field.value.toString()) || ''">
+    </span>
+</div>

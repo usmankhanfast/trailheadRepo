@@ -1,0 +1,42 @@
+<div class="progressModal" ng-show="config.isRunning || config.failedItems.length > 0">
+    <div class="modal overlay">
+        <div class="modalContainer">
+            <div class="title">
+                <div class="center inline-block">
+                    <span>
+                        {{config.title}}
+                    </span>
+                </div>
+            </div>
+            <div ng-hide="errorMessage == null" class="notification error">
+                <span ng-bind-html="errorMessage"/>
+            </div>
+            <div ng-show="config.failedItems.length == 0">
+                <div class="resultsLabel">
+                    {{config.message}} {{config.status}}
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" style="width: 100%"></div>
+                </div>
+                <div class="resultsLabel">
+                    You can close this page and the sync will continue in the background.
+                </div>
+            </div>
+            <div class="resultsLabel" ng-if="config.failedItems.length > 0">
+                <div>Failed {{config.type}} ({{config.failedItems.length}}):</div>
+                <div class="failedItems">
+                    <ul ng-repeat="item in config.failedItems track by $index">
+                        <li><a ng-if="!isLightning" ng-href="{{salesforceBase}}{{item.id}}" target="_blank">{{item.error}}</a></li>
+                        <li><a ng-if="isLightning" ng-href="{{salesforceBase}}{{item.id}}/view" target="_blank">{{item.error}}</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="buttons-container">
+                <input type="button"
+                       class="cancelButton"
+                       value="{{::closeText}}"
+                       ng-click="close();"/>
+            </div>
+        </div>
+    </div>
+</div>

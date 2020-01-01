@@ -1,0 +1,47 @@
+<div class="buttons-container" ng-show="(disabled && !appName) || disableSave">
+    <input type="button" class="cancelButton" value="Cancel" ng-click="cancel()" />
+    <a href="CustomDealWizard?id={{id}}&print=true" target="_blank" ng-show="appName != 'editCommissionItems' && appName != 'editCommissions' && appName != 'editInvoices' && page.toLowerCase().includes('summary')">
+        <img ng-src="{{imageBase}}/Printer_Icon.png" class="print-button" alt="Print Deal Summary" title="Print Deal Summary"/>
+    </a>
+</div>
+<div class="buttons-container" ng-hide="(disabled && !appName) || disableSave">
+    <input type="button"
+           class="cancelButton"
+           value="Cancel"
+           ng-click="cancel()"
+           ng-hide="page.toLowerCase().includes('submit')"
+           />
+    <input type="button"
+           class="cancelButton"
+           value="Close"
+           ng-click="cancel()"
+           ng-show="page.toLowerCase().includes('submit')"
+           />
+    <input type="button"
+           class="button"
+           value="Back to Summary"
+           ng-click="back()"
+           ng-show="page.toLowerCase().includes('submit')"
+           />
+    <input type="button"
+           class="button"
+           value="Save"
+           ng-click="save(false)"
+           ng-show="(!page.toLowerCase().includes('submit') && showRPDealWizard) || appName == 'editCommissions'"
+           ng-hide="((appName == 'editInvoices' || appName == 'editCommissionItems') && isSummary) || hideAllSaveButtons"
+           />
+    <input type="button"
+           class="button"
+           value="Save &amp; Continue"
+           ng-click="save(true)"
+           ng-show="appName != 'editCommissionItems' && appName != 'editCommissions' && appName != 'editInvoices' && !page.toLowerCase().includes('summary') && !hideAllSaveButtons && !isSummary"
+           />
+    <a href=""
+       target="_blank"
+       ng-click="saveandPrint(false, id)"
+       ng-show="appName != 'editCommissionItems' && appName != 'editCommissions' && appName != 'editInvoices' && page.toLowerCase().includes('summary')"><img ng-src="{{imageBase}}/Printer_Icon.png"
+       ng-hide="hideAllSaveButtons"
+         class="print-button"
+         alt="Print Deal Summary"
+         title="Print Deal Summary"/></a>
+</div>

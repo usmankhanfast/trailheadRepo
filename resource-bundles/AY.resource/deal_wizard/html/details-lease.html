@@ -1,0 +1,153 @@
+<div class="details">
+    <div class="section-header"
+        ng-show="isSummary">
+        <div class="header">Details</div>
+        <a ng-hide="isRecordsLocked || isPrintMode" ng-click="setPage('details')">Edit</a>
+        <hr/>
+    </div>
+    <div class="section">
+        <div class="row">
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::landlord.company.label}}
+            </div>
+            <div class="cell valueCol">
+                <div>
+                    <lookup-field field="landlord.company"
+                        readonly="isSummary"/>
+                </div>
+                <div>
+                    <a class="text-link"
+                        ng-click="setAyClient(landlord.company);"
+                        ng-hide="isSummary">
+                        [set as client]
+                    </a>
+                </div>
+            </div>
+            <div class="cell labelCol vfLabelColTextWrap">{{::deal.label}}</div>
+            <div class="cell valueCol">
+                <text-field field="deal"
+                    readonly="isSummary"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::landlord.contact.label}}
+            </div>
+            <div class="cell valueCol">
+                <lookup-field field="landlord.contact"
+                    readonly="isSummary"/>
+            </div>
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::recordType.label}}
+            </div>
+            <div class="cell valueCol">
+                <text-output field="recordType"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::tenant.company.label}}
+            </div>
+            <div class="cell valueCol">
+                <div>
+                    <lookup-field field="tenant.company"
+                        readonly="isSummary"/>
+                </div>
+                <div>
+                    <a class="text-link"
+                        ng-click="setAyClient(tenant.company);"
+                        ng-hide="isSummary">
+                        [set as client]
+                    </a>
+                </div>
+            </div>
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::property.label}}
+            </div>
+            <div class="cell valueCol">
+                <lookup-field field="property"
+                    readonly="isSummary"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::tenant.contact.label}}
+            </div>
+            <div class="cell valueCol">
+                <lookup-field field="tenant.contact"
+                    readonly="isSummary"/>
+            </div>
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::propertyDetails.address.label}}
+            </div>
+            <div class="cell valueCol">
+                <text-output field="propertyDetails.address"
+                    multiline="true"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::ayClient.label}}
+            </div>
+            <div class="cell valueCol">
+                <lookup-field field="ayClient"
+                    hide-help="{{isSummary}}"
+                    readonly="isSummary"/>
+            </div>
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::propertyType.label}}
+            </div>
+            <div class="cell valueCol">
+                <text-output field="propertyType"></text-output>
+                <text-output class="property-mismatch-update" field="mismatchedPropertyTypeField" ng-show="propertyTypeMismatch" ng-click="updatePropertyType();"></text-output>
+            </div>
+        </div>
+        <div class="row">
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::billTo.label}}
+            </div>
+            <div class="cell valueCol">
+                <lookup-field field="billTo"
+                    readonly="isSummary"/>
+            </div>
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::space.label}}
+            </div>
+            <div class="cell valueCol">
+                <lookup-field field="space"
+                    readonly="isSummary"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="cell labelCol vfLabelColTextWrap addressLabel">
+                {{::billToAddress.label}}
+            </div>
+            <div class="cell valueCol">
+                <textarea-field field="billToAddress"
+                    multiline="true"
+                    readonly="isSummary || defaultNetsuiteBillTo.value"/>
+            </div>
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::suiteFloorNumber.label}}
+            </div>
+            <div class="cell valueCol">
+                <text-field field="suiteFloorNumber"
+                    readonly="isSummary"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="cell labelCol vfLabelColTextWrap addressLabel">
+            </div>
+            <div class="cell valueCol">
+            </div>
+            <div class="cell labelCol vfLabelColTextWrap addressLabel">
+                {{::options.label}}
+            </div>
+            <div class="cell valueCol">
+                <textarea-field field="options"
+                    multiline="true"
+                    readonly="isSummary"/>
+            </div>
+        </div>
+    </div>
+</div>

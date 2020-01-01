@@ -1,0 +1,54 @@
+<div>
+    <h1>
+        Default Values
+    </h1>
+    <hr/>
+</div>
+<div class="details">
+    <div class="section">
+        <div class="row">
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::billTo.label}}
+            </div>
+            <div class="cell valueCol">
+                <lookup-field field="billTo"
+                    readonly="isSummary"/>
+            </div>
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::defaultPaymentTerms.label}}
+            </div>
+            <div class="cell valueCol">
+                <picklist-field field="defaultPaymentTerms"
+                    readonly="isSummary"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="cell labelCol vfLabelColTextWrap addressLabel">
+                {{::billToAddress.label}}
+            </div>
+            <div class="cell valueCol">
+                <textarea-field field="billToAddress"
+                                multiline="true"
+                                readonly="isSummary"
+                                />
+            </div>
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::defaultInvoiceTemplate.label}}
+            </div>
+            <div class="cell valueCol">
+                <picklist-field field="defaultInvoiceTemplate"
+                    readonly="isSummary"
+                    sans-none="true"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::defaultAttention.label}}
+            </div>
+            <div class="cell valueCol">
+                <text-field field="defaultAttention"
+                            readonly="isSummary"/>
+            </div>
+        </div>
+    </div>
+</div>

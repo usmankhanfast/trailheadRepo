@@ -1,0 +1,19 @@
+<div class="buttons-container">
+    <input type="button"
+           class="cancelButton"
+           value="{{labels.cancel}}"
+           ng-click="cancel()"
+           />
+    <input type="button"
+           class="button"
+           value="Previous"
+           onclick="window.location.reload()"
+           ng-show="page.includes('allocatePayments')"
+           />
+    <input type="button"
+           class="button"
+           value="{{labels.applyPayment}}"
+           ng-click="saveAllocations()"
+           ng-show="page.includes('allocatePayments') && contextInvoices"
+           />
+</div>

@@ -1,0 +1,53 @@
+<div class="navigation-container">
+    <ul class="breadcrumb">
+        <li>
+            <a ng-class="!page || page.indexOf('details') != -1 ? 'active' : (detailsMissingRequired ? 'rpRequired' : '')"
+                ng-disabled="disabled"
+                ng-click="navigateTo('details')">
+                Details
+            </a>
+        </li>
+        <li>
+            <a ng-class="page.indexOf('commissionItems') != -1 ? 'active' : (commissionItemsMissingRequired ? 'rpRequired' : '')"
+                ng-disabled="disabled"
+                ng-click="navigateTo('commissionItems')">
+                Commission Items
+            </a>
+        </li>
+        <li>
+            <a ng-class="page.indexOf('parties') != -1 ? 'active' : (partiesMissingRequired ? 'rpRequired' : '')"
+                ng-disabled="disabled"
+                ng-click="navigateTo('parties')">
+                Parties
+            </a>
+        </li>
+        <li>
+            <a ng-show="showRPDealWizard && !isFirstLoad" ng-class="page.indexOf('expenses') != -1 ? 'active' : (expensesMissingRequired ? 'rpRequired' : '')"
+                ng-disabled="disabled"
+                ng-click="navigateTo('expenses')">
+                Expenses
+            </a>
+        </li>
+        <li>
+            <a ng-show="showRPDealWizard && !isFirstLoad" ng-class="page.indexOf('invoices') != -1 ? 'active' : (invoicesMissingRequired ? 'rpRequired' : '')"
+                ng-disabled="disabled"
+                ng-click="navigateTo('invoices')">
+                Invoices
+            </a>
+        </li>
+        <li>
+            <a ng-show="showRPDealWizard && !isFirstLoad" ng-class="page.indexOf('documents') != -1 ? 'active' : (documentsMissingRequired ? 'rpRequired' : '')"
+                ng-disabled="disabled"
+                ng-click="navigateTo('documents')">
+                Documents
+            </a>
+        </li>
+        <li>
+            <a ng-class="page.indexOf('summary') != -1 ? 'active' : (summaryMissingRequired ? 'rpRequired' : '')"
+                ng-disabled="disabled"
+                ng-click="navigateTo('summary')">
+                Summary
+            </a>
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,17 @@
+<div class="help" ng-if="hideHelp != 'true'">
+    <ng-include="getTemplate('helpIcon')"/>
+</div>
+<div class="aptoField"
+    ng-class="{requiredInput: field.isRequired && !disabled}"
+    >
+    <div class="requiredBlock"
+        ng-if="field.isRequired && !disabled"
+        >
+    </div>
+    <input id="{{::baseId}}"
+        name="{{::baseId}}"
+        type="checkbox"
+        ng-disabled="disabled"
+        ng-model="field.value"
+        ng-required="field.isRequired"/>
+</div>

@@ -1,0 +1,416 @@
+<div class="section-header" ng-show="isSummary">
+    <div class="header">
+        {{::labels.commissionItems}}
+    </div>
+    <a ng-hide="isRecordsLocked || isPrintMode || removeEditLink" ng-click="setPage('commissionItems')">
+        {{::labels.edit}}
+    </a>
+    <hr/>
+</div>
+<div ng-show="appName == 'editCommissionItems' && isApprovedDeal" class="notification warning">
+    <span ng-bind="labels.dealAlreadyApproved"/>
+</div>
+<h1>
+    {{::labels.summary}}
+</h1>
+<hr />
+<div class="section">
+    <div class="row">
+        <div ng-if="acreage" class="cell labelCol vfLabelColTextWrap">
+            {{::acreage.label}}
+        </div>
+        <div ng-if="acreage" class="cell valueCol">
+            <text-field field="acreage"
+                readonly="isSummary"
+                hide-help="{{isSummary}}"
+                precision="2" />
+        </div>
+        <div ng-if="commencementDate" class="cell labelCol vfLabelColTextWrap">
+            {{::commencementDate.label}}
+        </div>
+        <div ng-if="commencementDate" class="cell valueCol">
+            <date-field field="commencementDate"
+                readonly="isSummary"
+                hide-help="{{isSummary}}"
+                hide-today-date="true" />
+        </div>
+    </div>
+    <div class="row">
+        <div ng-if="squareFootage" class="cell labelCol vfLabelColTextWrap">
+            {{::squareFootage.label}}
+        </div>
+        <div ng-if="squareFootage" class="cell valueCol">
+            <text-field field="squareFootage"
+                readonly="isSummary"
+                hide-help="{{isSummary}}"
+                precision="0"/>
+        </div>
+        <div ng-if="rentCommencementDate" class="cell labelCol vfLabelColTextWrap">
+            {{::rentCommencementDate.label}}
+        </div>
+        <div ng-if="rentCommencementDate" class="cell valueCol">
+            <date-field field="rentCommencementDate"
+                readonly="isSummary"
+                hide-help="{{isSummary}}"
+                hide-today-date="true" />
+        </div>
+    </div>
+    <div class="row">
+        <div ng-if="rentRate" class="cell labelCol vfLabelColTextWrap">
+            {{::rentRate.label}}
+        </div>
+        <div ng-if="rentRate" class="cell valueCol">
+            <currency-field field="rentRate"
+                readonly="isSummary"
+                hide-help="{{isSummary}}"
+                precision="2" />
+        </div>
+        <div ng-if="occupancyDate" class="cell labelCol vfLabelColTextWrap">
+            {{::occupancyDate.label}}
+        </div>
+        <div ng-if="occupancyDate" class="cell valueCol">
+            <date-field field="occupancyDate"
+                readonly="isSummary"
+                hide-help="{{isSummary}}"
+                hide-today-date="true" />
+        </div>
+    </div>
+    <div class="row">
+        <div ng-if="rentType" class="cell labelCol vfLabelColTextWrap">
+            {{::rentType.label}}
+        </div>
+        <div ng-if="rentType" class="cell valueCol" style="text-align:left">
+            <picklist-field readonly="isSummary" hide-help="{{isSummary}}" required-field="true" field="rentType" />
+        </div>
+        <div ng-if="expirationDate" class="cell labelCol vfLabelColTextWrap">
+            {{::expirationDate.label}}
+        </div>
+        <div ng-if="expirationDate" class="cell valueCol">
+            <date-field field="expirationDate"
+                readonly="isSummary"
+                hide-help="{{isSummary}}"
+                hide-today-date="true" />
+        </div>
+    </div>
+</div>
+
+<div class="commission-wrap table-wrap-margin-bottom">
+    <table>
+        <tbody class="hide-help">
+            <tr>
+                <th colspan="100%" class="h1">{{::labels.leaseCommissionDetails}}</th>
+            </tr>
+            <tr class="thead">
+                <th ng-hide="isSummary"></th>
+                <th>{{::commissionItems[0].description.label}}</th>
+                <th>{{::commissionItems[0].startDate.label}}</th>
+                <th>{{::commissionItems[0].endDate.label}}</th>
+                <th style="text-align:right">
+                    <div ng-show="rentType.value">{{commissionItemTerm}}</div>
+                </th>
+                <th style="text-align:right">{{::commissionItems[0].squareFootage.label}}</th>
+                <th>{{rentType.displayValue}}</th>
+                <th class="lock-column"></th>
+                <th style="text-align:right">
+                    <div ng-show="rentType.value">{{::labels.total}}</div>
+                </th>
+                <th>{{::labels.commissionType}}</th>
+                <th style="text-align:right">{{::labels.commission}}</th>
+                <th class="lock-column"></th>
+                <th class="commission-table-border" style="text-align:right;">{{::labels.commissionAmount}}</th>
+            </tr>
+            <tr ng-repeat="item in commissionItems | filter:{isFlaggedForDelete: false, recordType: 'Lease'} track by $index">
+                <td ng-hide="isSummary">
+                    <a ng-click="deleteCommissionItem(item)">
+                        {{::labels.del}}
+                    </a>
+                </td>
+                <td class="shortClass">
+                    <text-field hide-help="true"
+                                readonly="isSummary"
+                                field="item.description"/>
+                </td>
+                <td>
+                    <date-field hide-help="true"
+                                readonly="isSummary"
+                                field="item.startDate"
+                                on-field-change="calculateCheckLeaseTerm(true, item, 'startDate', $index);"
+                                hide-today-date="true"/>
+                </td>
+                <td>
+                    <date-field hide-help="true"
+                                readonly="isSummary"
+                                field="item.endDate"
+                                on-field-change="calculateCheckLeaseTerm(true, item, 'endDate', $index);"
+                                hide-today-date="true"/>
+                </td>
+                <td class="shortClass" style="text-align:right">
+                    <text-field hide-help="true"
+                                ng-show="rentType.value"
+                                readonly="isSummary"
+                                field="item.quantity"
+                                on-input-change="calculateCheckLeaseTerm(true, item, 'quantity', $index);"
+                                precision="4"/>
+                </td>
+                <td class="shortClass" style="text-align:right">
+                    <text-field hide-help="true"
+                                readonly="isSummary"
+                                field="item.squareFootage"
+                                on-input-change="calculateCheckLeaseTerm(false, item, 'squareFootage', $index);"
+                                precision="0"/>
+                </td>
+                <td class="shortClass" style="text-align:right">
+                    <currency-field
+                                    field="item.amount"
+                                    hide-help="true"
+                                    ng-show="rentType.value"
+                                    readonly="isSummary"
+                                    disabled="rentType.value == null"
+                                    on-field-change="calculateCheckLeaseTerm(false, item, 'amount', $index);"
+                                    precision="2"/>
+                </td>
+                <td class="lock-column">
+                    <div class="overrideCalculationsWrapper">
+                        <div class="overrideCalculations" ng-hide="item.overrideConsiderations || isSummary">
+                            <a href ng-click="overrideTotalChecked(item)">
+                                <img ng-src="{{getImageBase()}}/Lock.png" alt="lock" title="lock" />
+                            </a>
+                        </div>
+                        <div class="overrideCalculations" ng-show="item.overrideConsiderations && !isSummary">
+                            <a href ng-click="overrideTotalChecked(item)">
+                                <img ng-src="{{getImageBase()}}/Unlock.png" alt="unlock" title="unlock" />
+                            </a>
+                        </div>
+                    </div>
+                </td>
+                <td class="shortClass" style="text-align:right">
+                    <currency-output hide-help="true"
+                                     ng-hide="item.overrideConsiderations"
+                                     field="item.total"></currency-output>
+                    <currency-field field="item.overrideTotal"
+                                     ng-show="item.overrideConsiderations"
+                                     readonly="isSummary"
+                                     hide-help="true"
+                                     precision="2"></currency-field>
+                </td>
+                <td>
+                    <picklist-field hide-help="true"
+                                    readonly="isSummary"
+                                    field="item.rateType"
+                                    on-field-change="calculateCheckLeaseTerm(false, item, 'rateType', $index);"/>
+                </td>
+                <td class="shortClass" style="text-align:right">
+                    <div ng-show="item.rateType.value != '% of Total'">
+                        <currency-field field="item.commissionRate"
+                                        hide-help="true"
+                                        readonly="isSummary"
+                                        precision="2"
+                                        on-field-change="calculateCheckLeaseTerm(false, item, 'commissionRate', $index);"/>
+                    </div>
+                    <div ng-show="item.rateType.value == '% of Total'">
+                        <text-field hide-help="true"
+                                    readonly="isSummary"
+                                    field="item.commissionPercent"
+                                    on-input-change="calculateCheckLeaseTerm(false, item, 'commissionRate', $index);"
+                                    precision="5"/>
+                    </div>
+                </td>
+                <td class="lock-column">
+                    <div class="overrideCalculationsWrapper">
+                        <div class="overrideCalculations" ng-hide="item.overrideCalculations || isSummary">
+                            <a href ng-click="overrideChecked(item)">
+                                <img ng-src="{{getImageBase()}}/Lock.png" alt="lock" title="lock" />
+                            </a>
+                        </div>
+                        <div class="overrideCalculations" ng-show="item.overrideCalculations && !isSummary">
+                            <a href ng-click="overrideChecked(item)">
+                                <img ng-src="{{getImageBase()}}/Unlock.png" alt="unlock" title="unlock" />
+                            </a>
+                        </div>
+                    </div>
+                </td>
+                <td class="shortClass, commission-table-border" style="text-align:right;">
+                    <currency-output field="item.commissionAmount"
+                                     ng-hide="item.overrideCalculations"
+                                     readonly="isSummary"
+                                     hide-help="true"
+                                     precision="2"></currency-output>
+                    <currency-field field="item.overrideCommissionAmount"
+                                     ng-show="item.overrideCalculations"
+                                     readonly="isSummary"
+                                     hide-help="true"
+                                     precision="2"></currency-field>
+                </td>
+            </tr>
+            <tr ng-hide="isSummary" class="footer">
+                <td colspan="100%">
+                    <a ng-class="{'isDisabled': rentType.value==null}"
+                       ng-click="addCommissionItem('Lease')">
+                        {{::labels.addItem}}
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+
+        <!--other considerations tbody-->
+        <tbody class="hide-help">
+            <tr>
+                <th colspan="100%" class="h1">{{::labels.otherConsiderations}}</th>
+            </tr>
+            <tr class="thead">
+                <th ng-hide="isSummary"></th>
+                <th>
+                    {{::commissionItems[0].description.label}}
+                </th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th style="text-align:right">
+                    {{::commissionItems[0].amount.label}}
+                </th>
+                <th>
+                    {{::labels.commissionType}}
+                </th>
+                <th style="text-align:right">
+                    {{::labels.commission}}
+                </th>
+                <th></th>
+                <th class="commission-table-border" style="text-align:right;">
+                    {{::labels.commissionAmount}}
+                </th>
+            </tr>
+            <tr ng-repeat="item in commissionItems | filter:filterOtherSale track by $index" 
+                ng-show="rentType.value!=null">
+                
+               <td ng-hide="isSummary">
+                    <a ng-click="deleteCommissionItem(item)">
+                        {{::labels.del}}
+                    </a>
+                </td>
+                <td class="shortClass">
+                    <text-field hide-help="true"
+                                readonly="isSummary"
+                                field="item.description"/>
+                </td>
+                <td></td>
+                <td></td>
+                <td class="shortClass"></td>
+                <td class="shortClass"></td>
+                <td class="shortClass"></td>
+                <td></td>
+                <td class="shortClass" style="text-align:right">
+                    <text-field field="item.amount"
+                                readonly="isSummary"
+                                hide-help="true"
+                                precision="2"/>
+                </td>
+                <td>
+                    <picklist-field hide-help="true"
+                                    readonly="isSummary"
+                                    field="item.rateType"/>
+                </td>
+                <td class="shortClass" style="text-align:right">
+                    <div ng-show="item.rateType.value != '% of Total'">
+                        <currency-field field="item.commissionRate"
+                                        hide-help="true"
+                                        readonly="isSummary"
+                                        precision="2"/>
+                    </div>
+                    <div ng-show="item.rateType.value == '% of Total'">
+                        <text-field hide-help="true"
+                                    readonly="isSummary"
+                                    field="item.commissionPercent"
+                                    precision="5"/>
+                    </div>
+                </td>
+                <td class="lock-column">
+                    <div class="overrideCalculationsWrapper">
+                        <div class="overrideCalculations" ng-hide="item.overrideCalculations || isSummary">
+                            <a href ng-click="item.overrideCalculations = true;">
+                                <img ng-src="{{getImageBase()}}/Lock.png" alt="lock" title="lock" />
+                            </a>
+                        </div>
+                        <div class="overrideCalculations" ng-show="item.overrideCalculations && !isSummary">
+                            <a href ng-click="item.overrideCalculations = false;">
+                                <img ng-src="{{getImageBase()}}/Unlock.png" alt="unlock" title="unlock" />
+                            </a>
+                        </div>
+                    </div>
+                </td>
+                <td class="shortClass, commission-table-border" style="text-align:right;">
+                    <currency-output field="item.commissionAmount"
+                                     ng-hide="item.overrideCalculations"
+                                     readonly="isSummary"
+                                     hide-help="true"
+                                     precision="2"></currency-output>
+                    <currency-field field="item.overrideCommissionAmount"
+                                    ng-show="item.overrideCalculations"
+                                    readonly="isSummary"
+                                    hide-help="true"
+                                    precision="2"></currency-field>
+                </td>
+            </tr>
+            <tr ng-hide="isSummary" class="footer">
+                <td colspan="100%">
+                    <a ng-click="addCommissionItem('Other')">
+                        {{::labels.addItem}}
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+
+
+        <!-- totals -->
+        <tfoot class="hide-help">
+            <tr>
+                <td ng-hide="isSummary"></td>
+                <td class="shortClass"></td>
+                <td class="text-right" colspan="2" style="text-align:right">Total {{commissionItemTerm}}:</td>
+                <td class="shortClass" style="text-align:right">
+                    <text-output field="totalYears" readonly="isSummary" hide-help="true"></text-output>
+                </td>
+                <td class="shortClass"></td>
+                <td class="text-right" colspan="2" style="text-align:right">{{::labels.totalConsideration}}:</td>
+                <td class="shortClass" style="text-align:right">
+                    <currency-output field="totalConsideration" readonly="isSummary" hide-help="true"></currency-output>
+                </td>
+                <td></td>
+                <td class="text-right" colspan="2" style="text-align:right">{{::labels.totalTotalCommission}}:</td>
+                <td class="shortClass" style="text-align:right">
+                    <currency-output field="totalCommission" readonly="isSummary" hide-help="true"></currency-output>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<div class="progressModal" ng-show="showConfirmLeaseTermChange">
+    <div class="modal overlay">
+        <div class="modalContainer">
+            <div class="title">
+                <div class="center inline-block">
+                    <span>
+                        Confirm Lease Term Change
+                    </span>
+                </div>
+            </div>
+            <br/>
+            <br/>
+            <div class="resultsLabel">
+                <p>Over the term invoices will be re-generated and any changes made to individual invoices will be lost. Do you wish to continue?</p>
+            </div>
+            <div class="buttons-container">
+                <input type="button"
+                       class="cancelButton"
+                       value="Cancel"
+                       ng-click="confirmLeaseTermChange(false);"/>
+                <input type="button"
+                       class="button"
+                       value="Confirm"
+                       ng-click="confirmLeaseTermChange(true);"/>
+            </div>
+        </div>
+    </div>
+</div>

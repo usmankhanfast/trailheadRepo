@@ -1,0 +1,257 @@
+
+html, body{
+  min-height: 100%;
+}
+
+body {
+  position: relative;
+}
+.aptoField .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100; /* Salesforce Menu Button is 70 */
+  background-color: rgba(0,0,0,0.5); /*dim the background*/
+
+  > .modalContainer {
+    height: 85%;
+    width: 70%;
+    position: fixed;
+    top: 23%;
+    right: 15%;
+    margin-top: -100px;
+    margin-left: -200px;
+    border-radius: 5px;
+    z-index: 101;
+    background-color: white;
+    border: 1px solid #959595;
+    overflow: hidden;
+
+    span {
+      display: inline;
+      width: auto;
+    }
+
+    > div.closeButton {
+      top: 0px;
+      right: 0px;
+      float: right;
+      position: relative;
+      background-color: white;
+      border: none;
+      margin-right: 5px;
+      margin-top: 5px;
+      width: 16px;
+      height: 16px;
+
+      > a > img {
+        width:12px;
+      }
+    }
+
+    > .content {
+      display: flex;
+      flex-flow: column;
+      overflow-y: auto;
+      width: 100%;
+      height: 90%;
+
+      #searchInput, #subsidiaryInfo {
+        margin-bottom: 3px;
+
+        > .subsidiaryLabel {
+          width: 60px;
+        }
+
+        > .subsidiary {
+          /* These are technically the same, but use both */
+          overflow-wrap: break-word;
+          word-wrap: break-word;
+
+          -ms-word-break: break-all;
+          /* This is the dangerous one in WebKit, as it breaks things wherever */
+          word-break: break-all;
+          /* Instead use this non-standard one: */
+          word-break: break-word;
+
+          /* Adds a hyphen where the word breaks, if supported (No Blink) */
+          -ms-hyphens: auto;
+          -moz-hyphens: auto;
+          -webkit-hyphens: auto;
+          hyphens: auto;
+
+          white-space: pre-line;
+        }
+      }
+
+      > .header {
+        flex: 0 1 auto;
+
+        div {
+          padding: 0 7px;
+        }
+
+        .resultsLabel {
+          margin-top: 5px;
+        }
+      }
+
+      > div#searchContainer {
+        margin-left: 5px;
+        margin-right: 5px;
+        overflow: auto;
+        flex: 1 1 auto;
+        border: 1px solid #DDDDDD;
+
+        > div {
+          width:100%;
+          text-align: left;
+        }
+
+        > #searchResults {
+            width: 100%;
+
+          > div {
+            height: inherit;
+            width: inherit;
+            display: block;
+
+            > span {
+              margin: 0;
+              position: absolute;
+              top: 55%;
+              left: 35%;
+              margin-right: -50%;
+              border-bottom: 1px solid black;
+              transform: translate(0, -50%);
+            }
+          }
+
+          > .table-wrap {
+              height: 100%;
+
+              table {
+                  border: none;
+                  font-size: 12px;
+                  margin: 0;
+                  width: 100%;
+              }
+
+              thead, tbody, tr, td, th { display: block;}
+              td, th { border: none;}
+              tr:after {
+                  content: ' ';
+                  display: block;
+                  visibility: hidden;
+                  clear: both;
+              }
+
+              thead {
+                 padding-right: 15px;
+                 background-color: #f6f6f6;
+
+                > th {
+                  height: 30px;
+                  border: 0px solid;
+                  word-wrap: break-word;
+                }
+              }
+
+              tbody {
+                  > tr > td:nth-of-child(2) {
+                    text-align: right;
+                  }
+              }
+
+              thead {
+                  /* fallback */
+              }
+
+
+              thead th {
+                  width: 42%;
+                  float: left;
+              }
+
+              tbody tr {
+                min-height: 19px;
+                border-bottom: 1px solid #DDDDDD; 
+              }
+
+              tbody td {
+                  width: 42%;
+                  float: left;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  height: 100%;
+              }
+
+              .errorMessage {
+                  padding: 5px;
+                  word-wrap: normal;
+              }
+          }
+        }
+      }
+
+      div#modalAction {
+        text-align: left;
+        flex: 0 1 15px;
+        margin: 10px 5px;
+      }
+    }
+
+    > .title {
+      width: inherit;
+      font-size: 18px;
+      font-weight: bold;
+      height: 21px;
+      padding: 5px;
+
+
+      > div span {
+        margin-top: 5px;
+        margin-bottom: 5px;
+
+        > span {
+          text-transform:capitalize;
+        }
+      }
+
+      > .recordType {
+        text-transform: capitalize;
+      }
+    }
+  }
+
+    @media screen and (max-width: 1100px) {
+    > .modalContainer { 
+        width: 500px;
+      height: 375px;
+      left: 50%;
+      }
+    }
+
+}
+.large.overlay {
+
+  > .modalContainer {
+    padding: 10px;
+    height: auto;
+    width: 90%;
+    position: fixed;
+    top: 30%;
+    left: 250px;
+    overflow: scroll;
+
+    > .content {
+      display: flex;
+      flex-flow: column;
+      overflow-y: auto;
+      width: 100%;
+      height: initial;
+    }
+  }
+}

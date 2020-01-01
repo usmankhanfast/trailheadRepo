@@ -1,0 +1,116 @@
+body .content {
+    padding: 0 10px;
+}
+
+#fileSection {
+    margin-top: -6px;
+}
+
+.row {
+    height: 35px;
+}
+
+.row label, .progress-status .progress-text
+{
+    width: 200px;
+    text-align: right;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+@-webkit-keyframes progress-bar-stripes {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 40px 0;
+    }
+}
+@-moz-keyframes progress-bar-stripes {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 40px 0;
+    }
+}
+@-ms-keyframes progress-bar-stripes {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 40px 0;
+    }
+}
+@keyframes progress-bar-stripes {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 40px 0;
+    }
+}
+
+.progress-status {
+    display: inline-block;
+
+    margin-top: -6px;
+}
+
+.progress-bar-container {
+    display: inline-block;
+
+    width: 200px;
+    height: 26px;
+
+    vertical-align: middle;
+
+    border-radius: 5px;
+    background-color: #ddd;
+}
+
+.progress-bar {
+    display: inline-block;
+
+    height: inherit;
+
+    -webkit-animation: progress-bar-stripes 2s linear infinite;
+       -moz-animation: progress-bar-stripes 2s linear infinite;
+        -ms-animation: progress-bar-stripes 2s linear infinite;
+            animation: progress-bar-stripes 2s linear infinite;
+
+    border-radius: 5px;
+    background-color: #007bb4;
+    background-image: linear-gradient(
+        45deg,
+        rgba(255,255,255,.4) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255,255,255,.4) 50%,
+        rgba(255,255,255,.4) 75%,
+        transparent 75%,
+        transparent);
+    background-size: 40px 40px;
+}
+
+.loadingSpinner {
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+}
+
+div#notifications {
+    min-height: 20px;
+    background: #ffffcc ;
+    border-style: solid;
+    border-color: #c00;
+    border-radius: 5px;
+    border-width: 1px;
+    position: relative;
+    display: block;
+    width: 100%;
+    margin-top: 5px;
+}
+#contentForm {
+    display:table;
+}

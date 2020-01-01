@@ -1,0 +1,69 @@
+<div class="help">
+    <ng-include="getTemplate('helpIcon')"/>
+</div>
+<div class="aptoField"
+    ng-class="{requiredInput: field.isRequired}"
+    ng-hide="readonly"
+    >
+    <div class="requiredBlock"
+        ng-if="field.isRequired"
+        >
+    </div>
+    <table class="multiSelectPicklistTable"
+        border="0"
+        cellspacing="0"
+        cellpadding="0"
+        >
+        <tr class="multiSelectPicklistRow">
+            <td>
+                <select multiple="multiple"
+                    style="width: 182px;"
+                    size="4" id="{{::baseId}}_available"
+                    ng-dblclick="add"
+                    ng-disabled="disabled"
+                    ng-options="option.value as option.label group by 'Available' for option in field.options"
+                    ng-model="available"
+                    ng-required="field.isRequired"
+                    >
+                </select>
+            </td>
+            <td class="multiSelectPicklistCell">
+                <a ng-click="add();"
+                    title="Add">
+                    <img src="/s.gif"
+                        alt="Add"
+                        class="picklistArrowRight"
+                        style="cursor:pointer;"
+                        title="Add" />
+                </a>
+                <br>
+                <br>
+                <a ng-click="remove();"
+                    title="Remove">
+                    <img src="/s.gif"
+                        alt="Remove"
+                        class="picklistArrowLeft"
+                        style="cursor:pointer;"
+                        title="Remove"
+                        >
+                    </a>
+            </td>
+            <td>
+                <select multiple="multiple"
+                    style="width: 182px;"
+                    size="4"
+                    id="{{::baseId}}_selected"
+                    ng-dblclick="remove"
+                    ng-disabled="disabled"
+                    ng-options="option.value as option.label group by 'Chosen' for option in field.selected"
+                    ng-model="selected"
+                    ng-required="field.isRequired"
+                    >
+                </select>
+            </td>
+        </tr>
+    </table>
+</div>
+<text-output ng-show="readonly"
+    field="field"
+    hide-help="true"/>

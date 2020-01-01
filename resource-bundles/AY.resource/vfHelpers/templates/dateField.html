@@ -1,0 +1,35 @@
+<div class="help" ng-if="hideHelp != 'true'" ng-hide="hideHelp || isSummary">
+    <ng-include="getTemplate('helpIcon')"/>
+</div>
+<div class="aptoField"
+    ng-class="{requiredInput: field.isRequired}"
+    ng-hide="readonly"
+    >
+    <div class="requiredBlock"
+        ng-if="field.isRequired"
+        >
+    </div>
+    <span class="dateInput dateOnlyInput">
+        <input id="{{::baseId}}"
+            name="{{::baseId}}"
+            ng-disabled="disabled"
+            ng-focus="showDatePicker(baseId);"
+            size="12"
+            type="text"
+            ng-model="field.value"
+            ng-required="field.isRequired"
+            ng-change="checkDatePairing()"
+            ng-blur="onFieldBlurred(baseId)"
+            class="aptoField" />
+        <span ng-hide="hideTodayDate" class="dateFormat">
+            [
+            <a ng-click="insertDate(baseId);">
+                {{today}}
+            </a>
+            ]
+        </span>
+    </span>
+</div>
+<text-output ng-show="readonly"
+    field="field"
+    hide-help="true"/>

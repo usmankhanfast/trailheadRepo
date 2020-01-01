@@ -1,0 +1,100 @@
+<div class="section-header" ng-show="isSummary">
+    <div class="header">Commission Items</div>
+    <a ng-hide="isRecordsLocked || isPrintMode" ng-click="setPage('commissionItems')">Edit</a>
+    <hr/>
+</div>
+<div ng-show="appName == 'editCommissionItems' && isApprovedDeal" class="notification warning">
+    <span ng-bind="labels.dealAlreadyApproved"/>
+</div>
+<h1>Commission Items</h1>
+<hr />
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th ng-hide="isSummary"></th>
+                <th>{{::commissionItems[0].description.label}}</th>
+                <th style="text-align:right">{{::commissionItems[0].amount.label}}</th>
+                <th>{{::labels.commissionType}}</th>
+                <th style="text-align:right">{{::labels.commission}}</th>
+                <th></th>
+                <th style="text-align:right">{{::labels.commissionAmount}}</th>
+            </tr>
+        </thead>
+        <tbody class="hide-help">
+            <tr ng-repeat="item in commissionItems | filter : { isFlaggedForDelete : false } track by $index">
+                <td ng-hide="isSummary">
+                    <a ng-click="deleteCommissionItem(item)">{{::labels.del}}</a>
+                </td>
+                <td>
+                    <text-field field="item.description"
+                                readonly="isSummary"
+                                hide-help="{{isSummary}}"/>
+                </td>
+                <td style="text-align:right">
+                    <text-field field="item.amount"
+                                hide-help="true"
+                                readonly="isSummary"
+                                precision="2" />
+                </td>
+                <td>
+                    <picklist-field field="item.rateType"
+                                    hide-help="true"
+                                    readonly="isSummary" />
+                </td>
+                <td class="shortClass" style="text-align:right">
+                    <div ng-show="item.rateType.value.toLowerCase().includes('flat fee')">
+                        <currency-field field="item.commissionRate"
+                                        align-right="false"
+                                        readonly="isSummary"
+                                        hide-help="{{isSummary}}"
+                                        precision="2" />
+                    </div>
+                    <div ng-hide="item.rateType.value.toLowerCase().includes('flat fee')">
+                        <text-field field="item.commissionPercent"
+                                    readonly="isSummary"
+                                    hide-help="{{isSummary}}"
+                                    precision="5" />
+                    </div>
+                </td>
+                <td></td>
+                <td class="shortClass" style="text-align:right">
+                    <currency-output hide-help="{{isSummary}}" field="item.commissionAmount" ng-hide="item.overrideCalculations"></currency-output>
+                    <currency-output hide-help="{{isSummary}}" field="item.overrideCommissionAmount" ng-show="item.overrideCalculations"></currency-output>
+                </td>
+            </tr>
+            <tr ng-hide="isSummary" class="footer">
+                <td colspan="100%">
+                    <a ng-click="addCommissionItem()">
+                        {{::labels.addItem}}
+                    </a>
+                </td>
+            </tr>
+            <tr class="totals-row">
+                <td ng-hide="isSummary"></td>
+                <td style="text-align:right">
+                    <label>
+                        {{::labels.totalConsideration}}:
+                    </label>
+                </td>
+                <td style="text-align:right">
+                    <currency-output field="totalConsideration"
+                        readonly="isSummary"
+                        hide-help="true"/>
+                </td>
+                <td></td>
+                <td></td>
+                <td style="text-align:right">
+                    <label>
+                        {{::labels.totalTotalCommission}}:
+                    </label>
+                </td>
+                <td style="text-align:right">
+                    <currency-output field="totalCommission"
+                        readonly="isSummary"
+                        hide-help="true"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

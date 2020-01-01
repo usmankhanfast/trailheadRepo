@@ -1,0 +1,119 @@
+<div class="section-header" ng-show="isSummary && showRPDealWizard">
+    <div class="header">
+        Documents
+    </div>
+    <a ng-hide="isRecordsLocked || isPrintMode" ng-click="setPage('documents')"
+        ng-show="showRPDealWizard">
+        Edit
+    </a>
+    <hr/>
+</div>
+<div ng-hide="isSummary && !showRPDealWizard">
+    <h1>
+        Transaction Date
+    </h1>
+    <hr/>
+    <p ng-class="{'rpRequired': !transactionDate.value && showRPDealWizard}">
+        <date-field readonly="isSummary"
+                    hide-help="{{isSummary}}"
+                    field="transactionDate"
+                    hide-today-date="true"
+                    on-field-change="setAllRPRequiredFields()"/>
+    </p>
+    <h1>
+        Required Document Status
+    </h1>
+    <hr/>
+    <p>
+        Document Information&nbsp;
+        <span ng-style="documentStatus == 'COMPLETE' && {'color' : 'green'} || documentStatus == 'INCOMPLETE' && {'color' : 'red', 'background' : '#FCF8CD'}">
+            {{documentStatus}}
+        </span>
+    </p>
+    <div class="section">
+        <div class="row">
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::feeAgreement.label}}
+            </div>
+            <div class="cell valueCol">
+                <picklist-field readonly="isSummary"
+                    field="feeAgreement" />
+            </div>
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::documentUri.label}}
+            </div>
+            <div class="cell valueCol">
+                <text-field readonly="isSummary"
+                    field="documentUri" type="file"/>
+        </div>
+        </div>
+        <div class="row">
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::dealAgreements.label}}
+            </label>
+        </div>
+            <div class="cell valueCol">
+                <picklist-field readonly="isSummary"
+                    field="dealAgreements" />
+        </div>
+        </div>
+        <div class="row">
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::cobrokerAgreement.label}}
+            </label>
+        </div>
+            <div class="cell valueCol">
+                <picklist-field readonly="isSummary"
+                    field="cobrokerAgreement" />
+        </div>
+        </div>
+        <div class="row">
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::trustEscrowAgreement.label}}
+            </label>
+        </div>
+            <div class="cell valueCol">
+                <picklist-field readonly="isSummary"
+                    field="trustEscrowAgreement" />
+        </div>
+        </div>
+    </div>
+</div>
+<div class="progressModal" ng-show="$parent.showTransactionDateModal == true">
+    <div class="modal overlay">
+        <div class="modalContainer">
+            <div class="closeButton">
+                <a ng-click="closeModal();">
+                    <!-- <img ng-src="{{imgLocation}}/Close.png"
+                        alt="Close"
+                        title="Close" /> -->
+                </a>
+            </div>
+            <div class="title">
+                <div class="center inline-block">
+                    <span>
+                        Future Transaction Date
+                    </span>
+                </div>
+            </div>
+            <div ng-hide="errorMessage == null" class="notification error">
+                <span ng-bind-html="errorMessage"/>
+            </div>
+            <div class="resultsLabel">
+                Please confirm that you have intentionally entered a date in the future.
+            </div>
+            <div class="buttons-container">
+                <input type="button"
+                       class="button"
+                       value="Yes" 
+                       ng-click="$parent.showTransactionDateModal = false;"
+                       />
+                <input type="button"
+                       class="button"
+                       value="No" 
+                       ng-click="$parent.showTransactionDateModal = false; transactionDate.value = null"
+                       />
+            </div>
+        </div>
+    </div>
+</div>

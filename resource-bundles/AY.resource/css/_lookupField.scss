@@ -1,0 +1,23 @@
+span.lookupInput {
+    position: relative;
+
+    & a {
+        text-decoration: none;
+        width: 20px;
+        height: 20px;
+        position:absolute; 
+        left:0px; 
+    }
+
+    & input, & input:focus {
+        padding-left: 24px;
+    }
+
+    & img {
+        padding: 2px 0px 0px 5px;
+    }               
+}
+
+.cell.labelCol.vfLabelColTextWrap {
+    text-align: right;
+}

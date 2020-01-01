@@ -1,0 +1,548 @@
+<div class="invoices">
+    <div class="details">
+        <div class="section-header" ng-show="isSummary">
+            <div class="header">Invoices</div>
+            <a ng-hide="isRecordsLocked || !showRPDealWizard || isPrintMode" ng-click="setPage('invoices')">Edit</a>
+            <hr/>
+        </div>
+        <div ng-show="appName == 'editInvoices' && isApprovedDeal" class="notification warning">
+            <span ng-bind="labels.dealAlreadyApproved"></span>
+        </div>
+
+        <div ng-hide="primaryBroker || isSummary || appName == 'editInvoices'" class="notification error">
+            <span ng-bind-html="labels.needPrimaryBroker"></span>
+        </div>
+
+        <div ng-show="primaryBroker
+                      && !primaryBroker.subsidiaryId
+                      && !isSummary
+                      && appName != 'editInvoices'"
+             class="notification error"
+             >
+            <span ng-bind-html="labels.primaryBrokerMissingSubsidiary"/>
+        </div>
+
+        <div ng-hide="isSummary" ng-include="invoiceDefaultsTemplate"> </div>
+        <div class="invoices-container">
+            <div ng-hide="isSummary && visibleProFormaInvoices.length === 0">
+                <h1>Pro-Forma Invoices</h1>
+                <hr/>
+            </div>
+            <div class="section" ng-hide="isSummary">
+                <div ng-repeat="invoice in visibleProFormaInvoices track by $index"
+                    ng-include="proformaInvoiceTemplate"
+                    ng-hide="invoice.isFlaggedForDelete">
+                </div>
+                <div class="addInvoiceButton">
+                    <a class="text-link" ng-click="addInvoice(true); setAllRPRequiredFields();">
+                        Add Invoice
+                    </a>
+                </div>
+            </div>
+            <table class="invoice-summary" ng-show="isSummary && visibleProFormaInvoices.length > 0">
+                <thead>
+                <tr>
+                    <th style="text-align:left">{{invoices[0].invoiceUrl.label}}</th>
+                    <th style="text-align:left">{{invoices[0].aptoBillTo.label}}</th>
+                    <th style="text-align:left">{{invoices[0].estimatedInvoiceDate.label}}</th>
+                    <th style="text-align:left">{{invoices[0].specificInvoiceDate.label}}</th>
+                    <th style="text-align:right">{{invoices[0].proformaAmount.label}}</th>
+                    <th style="text-align:left">{{invoices[0].proFormaGeneratedDate.label}}</th>
+                    <th style="text-align:left">{{invoices[0].isPrinted.label}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="invoice in visibleProFormaInvoices | limitTo:invoicePaging track by $index">
+                    <td style="text-align:left"><text-output field="invoice.invoiceUrl" hide-help="true"></text-output></td>
+                    <td style="text-align:left"><text-output field="invoice.aptoBillTo" hide-help="true"></text-output></td>
+                    <td style="text-align:left"><text-output field="invoice.estimatedInvoiceDate" hide-help="true"></text-output></td>
+                    <td style="text-align:left"><text-output field="invoice.specificInvoiceDate" hide-help="true"></text-output></td>
+                    <td style="text-align:right"><text-output field="invoice.proformaAmount" hide-help="true"></text-output></td>
+                    <td style="text-align:left"><text-output field="invoice.proFormaGeneratedDate" hide-help="true"></text-output></td>
+                    <td style="text-align:left"><text-output field="invoice.isPrinted" hide-help="true"></text-output></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="invoices-container" ng-if="appName != 'editInvoices' || isComp">
+            <div ng-hide="isSummary && visibleAccountingInvoices.length === 0">
+                <h1>Accounting Invoices</h1>
+                <hr/>
+            </div>
+            <div ng-show="showRPDealWizard && !isAllCommissionAllocated" class="notification warning">
+                <span ng-bind-html="labels.percentUnder100"></span>
+            </div>
+            <div class="paymentsSummary"
+                 ng-hide="isSummary">
+                <div class="paymentTotals">
+                    <div class="paymentLabels">
+                        <div class="labelCol">Gross Commission</div> <!-- use when label is unprotected: {!$Label.McLabs2__Sale_Gross_Commission_Text} -->
+                        <div class="labelCol">Unbilled Gross Commission</div> <!-- use when label is unprotected: {!$Label.McLabs2__Unbilled_Gross_Commission_Text} -->
+                    </div>
+                    <div class="paymentValues">
+                        <div>
+                            {{ (totalCommission.value || 0 | currency) }}
+                        </div>
+                        <div class="unbilledGrossCommission" ng-class="{invalid: !isAllCommissionAllocated}">
+                            {{ (unbilledGrossCommission || 0 | currency) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section" ng-hide="isSummary">
+                <div class="addInvoiceButton">
+                    <a class="text-link" ng-click="addInvoice(false)">
+                        Add Invoice
+                    </a>
+                </div>
+                <div class="addOTTInvoicesButton" ng-show="pageTemplate == 'lease' && approvalStatus.value != 'Approved'">
+                    <a class="text-link" ng-click="openOTTOverlay();">
+                        Add Over the Term Invoices
+                    </a>
+                </div>
+            </div>
+            <div class="section" ng-hide="isSummary">
+                <div ng-repeat="invoice in visibleAccountingInvoices track by $index"
+                     ng-include="accountingInvoiceTemplate"
+                     ng-hide="invoice.isFlaggedForDelete || invoice.overTheTermCommissionItem.value != null">
+                </div>
+            </div>
+            <div ng-hide="isSummary" ng-class="{'aptoField' : showOTTOverlay}">
+                <div class="large" ng-class="{'modal overlay' : showOTTOverlay}">
+                    <div ng-class="{'modalContainer' : showOTTOverlay}">
+                        <div ng-show="showOTTOverlay" class="closeButton">
+                            <a ng-click="closeOTTOverlay()" id="{{::baseId}}_lkwgt">
+                                <img ng-src="{{getImageBase()}}/Close.png" alt="Close" title="Close" />
+                            </a>
+                        </div>
+                        <div ng-show="showOTTOverlay" class="title">
+                            <div class="center inline-block">Generate Over the Term Invoices</div>
+                        </div>
+                        <div class="content">
+                            <div ng-show="showOTTOverlay">
+                                <b>Use Defaults</b> <boolean-field field="useDefaultForOTTInvoices"/>
+                            </div>
+                            <div ng-show="ottErrorMessage && showOTTOverlay" class="notification error">
+                                <span ng-bind-html="ottErrorMessage"/>
+                            </div>
+                            <div ng-if="showOTTOverlay" class="table-wrap">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                {{commissionItems[0].description.label}}
+                                            </th>
+                                            <th>
+                                                {{commissionItems[0].startDate.label}}
+                                            </th>
+                                            <th>
+                                                {{commissionItems[0].endDate.label}}
+                                            </th>
+                                            <th>
+                                                {{commissionItemTerm}}
+                                            </th>
+                                            <th>
+                                                {{commissionItems[0].squareFootage.label}}
+                                            </th>
+                                            <th>
+                                                {{rentType.displayValue}}
+                                            </th>
+                                            <th>
+                                                {{::labels.total}}
+                                            </th>
+                                            <th>
+                                                {{::labels.commissionType}}
+                                            </th>
+                                            <th>
+                                                {{::labels.commission}}
+                                            </th>
+                                            <th>
+                                                {{::labels.commissionAmount}}
+                                            </th>
+                                            <th>
+                                                Billing Frequency
+                                            </th>
+                                            <th>
+                                                Revenue Recognition
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="hide-help">
+                                        <tr ng-repeat="item in commissionItems | filter:{isFlaggedForDelete: false, recordType: 'Lease'} track by item.id">
+                                            <td>
+                                                <text-field hide-help="true"
+                                                            readonly="true"
+                                                            field="item.description"/>
+                                            </td>
+                                            <td>
+                                                <date-field hide-help="true"
+                                                            readonly="true"
+                                                            field="item.startDate"
+                                                            on-field-blur="calculateLeaseTerm(item);"
+                                                            hide-today-date="true"/>
+                                            </td>
+                                            <td>
+                                                <date-field hide-help="true"
+                                                            readonly="true"
+                                                            field="item.endDate"
+                                                            on-field-blur="calculateLeaseTerm(item);"
+                                                            hide-today-date="true"/>
+                                            </td>
+                                            <td>
+                                                <text-field hide-help="true"
+                                                            readonly="true"
+                                                            field="item.quantity"
+                                                            precision="2"/>
+                                            </td>
+                                            <td>
+                                                <text-field hide-help="true"
+                                                            readonly="true"
+                                                            field="item.squareFootage"
+                                                            precision="0"/>
+                                            </td>
+                                            <td>
+                                                <currency-field
+                                                                align-right="false"
+                                                                field="item.amount"
+                                                                hide-help="true"
+                                                                readonly="true"
+                                                                disabled="rentType.value == null"
+                                                                precision="2"/>
+                                            </td>
+                                            <td>
+                                                <currency-output hide-help="true"
+                                                                 field="item.total" />
+                                            </td>
+                                            <td>
+                                                <picklist-field hide-help="true"
+                                                                readonly="true"
+                                                                field="item.rateType"/>
+                                            </td>
+                                            <td>
+                                                <div ng-show="item.rateType.value != '% of Total'">
+                                                    <currency-field field="item.commissionRate"
+                                                                    align-right="false"
+                                                                    hide-help="true"
+                                                                    readonly="true"
+                                                                    precision="2"/>
+                                                </div>
+                                                <div ng-show="item.rateType.value == '% of Total'">
+                                                    <text-field hide-help="true"
+                                                                readonly="true"
+                                                                field="item.commissionPercent"
+                                                                precision="5"/>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <currency-output hide-help="true" field="item.commissionAmount" ng-hide="item.overrideCalculations"></currency-output>
+                                                <currency-output hide-help="true" field="item.overrideCommissionAmount" ng-show="item.overrideCalculations"></currency-output>
+                                            </td>
+                                            <td>
+                                                <picklist-field field="item.billingFrequency" on-field-change="setOTTRequiredFields(item)"/>
+                                            </td>
+                                            <td>
+                                                <picklist-field field="item.revenueRecognition"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div ng-if="!showOTTOverlay" ng-repeat="item in commissionItems | filter:{isFlaggedForDelete: false, recordType: 'Lease'} track by item.id" ng-show="item.id != null && itemHasChildOTTInvoices(item)" class="table-wrap">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th ng-hide="showOTTOverlay">
+                                            </th>
+                                            <th>
+                                            </th>
+                                            <th>
+                                                {{commissionItems[0].description.label}}
+                                            </th>
+                                            <th>
+                                                {{commissionItems[0].startDate.label}}
+                                            </th>
+                                            <th>
+                                                {{commissionItems[0].endDate.label}}
+                                            </th>
+                                            <th>
+                                                {{commissionItemTerm}}
+                                            </th>
+                                            <th>
+                                                {{commissionItems[0].squareFootage.label}}
+                                            </th>
+                                            <th>
+                                                {{rentType.displayValue}}
+                                            </th>
+                                            <th>
+                                                {{::labels.total}}
+                                            </th>
+                                            <th>
+                                                {{::labels.commissionType}}
+                                            </th>
+                                            <th>
+                                                {{::labels.commission}}
+                                            </th>
+                                            <th>
+                                                {{::labels.commissionAmount}}
+                                            </th>
+                                            <th ng-hide="showOTTOverlay">
+
+                                            </th>
+                                            <th ng-show="showOTTOverlay">
+                                                Billing Frequency
+                                            </th>
+                                                    <th ng-show="showOTTOverlay">
+                                                Revenue Recognition
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="hide-help" ng-class="item.isComVoided || item.isVoidUnvoid? 'voided':''">
+                                        <tr>
+                                            <td ng-hide="showOTTOverlay">
+                                                <a class="text-link" style="font-size:28px;text-decoration: none;"
+                                                   ng-hide="item.showChildOTTInvoices"
+                                                   ng-click="item.showChildOTTInvoices = true;">+</a>
+                                                <a class="text-link" style="font-size:28px;text-decoration: none;"
+                                                   ng-show="item.showChildOTTInvoices"
+                                                   ng-click="item.showChildOTTInvoices = false;">-</a>
+                                            </td>
+                                            <td>        
+                                                <a class="text-link" ng-click="editBulkOTTInvoice(item.id, visibleAccountingInvoices);">Edit
+                                                </a>
+                                                    |
+                                                <a class="text-link" ng-click="deleteBulkInvoice(item.id, visibleAccountingInvoices); setAllRPRequiredFields();">Delete
+                                                </a>
+                                                <span ng-hide="item.isComVoided || item.isComSaved">|
+                                                <a class="text-link" ng-click="voidBulkInvoice(item.id, visibleAccountingInvoices)">
+                                                    {{item.isVoidUnvoid ? 'Unvoid' : 'Void'}}
+                                                </a>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <text-field hide-help="true"
+                                                            readonly="true"
+                                                            field="item.description"/>
+                                            </td>
+                                            <td>
+                                                <date-field hide-help="true"
+                                                            readonly="true"
+                                                            field="item.startDate"
+                                                            on-field-blur="calculateLeaseTerm(item);"
+                                                            hide-today-date="true"/>
+                                            </td>
+                                            <td>
+                                                <date-field hide-help="true"
+                                                            readonly="true"
+                                                            field="item.endDate"
+                                                            on-field-blur="calculateLeaseTerm(item);"
+                                                            hide-today-date="true"/>
+                                            </td>
+                                            <td>
+                                                <text-field hide-help="true"
+                                                            readonly="true"
+                                                            field="item.quantity"
+                                                            precision="2"/>
+                                            </td>
+                                            <td>
+                                                <text-field hide-help="true"
+                                                            readonly="true"
+                                                            field="item.squareFootage"
+                                                            precision="0"/>
+                                            </td>
+                                            <td>
+                                                <currency-field
+                                                                align-right="false"
+                                                                field="item.amount"
+                                                                hide-help="true"
+                                                                readonly="true"
+                                                                disabled="rentType.value == null"
+                                                                precision="2"/>
+                                            </td>
+                                            <td>
+                                                <currency-output hide-help="true"
+                                                                 field="item.total" />
+                                            </td>
+                                            <td>
+                                                <picklist-field hide-help="true"
+                                                                readonly="true"
+                                                                field="item.rateType"/>
+                                            </td>
+                                            <td>
+                                                <div ng-show="item.rateType.value != '% of Total'">
+                                                    <currency-field field="item.commissionRate"
+                                                                    align-right="false"
+                                                                    hide-help="true"
+                                                                    readonly="true"
+                                                                    precision="2"/>
+                                                </div>
+                                                <div ng-show="item.rateType.value == '% of Total'">
+                                                    <text-field hide-help="true"
+                                                                readonly="true"
+                                                                field="item.commissionPercent"
+                                                                precision="5"/>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <currency-output hide-help="true" field="item.commissionAmount" ng-hide="item.overrideCalculations"></currency-output>
+                                                <currency-output hide-help="true" field="item.overrideCommissionAmount" ng-show="item.overrideCalculations"></currency-output>
+                                            </td>
+                                            <td ng-show="showOTTOverlay">
+                                                <picklist-field field="item.billingFrequency"/>
+                                            </td>
+                                            <td  ng-show="showOTTOverlay">
+                                                <picklist-field field="item.revenueRecognition"/>
+                                            </td>
+                                        </tr>
+                                        <tr ng-show="item.showChildOTTInvoices">
+                                            <td colspan="100%">
+                                                <table>
+                                                    <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>
+                                                            Description
+                                                        </th>
+                                                        <th>
+                                                            {{invoices[0].estimatedInvoiceDate.label}}
+                                                        </th>
+                                                        <th>
+                                                            {{invoices[0].specificInvoiceDate.label}}
+                                                        </th>
+                                                        <th>
+                                                            {{invoices[0].nsBillTo.label}}
+                                                        </th>
+                                                        <th>
+                                                            Invoice {{invoices[0].subTotal.label}}
+                                                        </th>
+                                                        <th>
+                                                            {{invoices[0].recognizeRevenue.label}}
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody class="hide-help" id="ott-invoices-container">
+                                                        <tr class="ott-invoice-row" ng-repeat="ottInvoice in visibleAccountingInvoices | limitTo:invoicePaging track by $index" ng-if="item.id == ottInvoice.overTheTermCommissionItem.value" ng-class="ottInvoice.isVoided? 'voided':''"
+                                                        >
+                                                            <td>
+                                                                <a class="text-link" ng-click="editOTTInvoice($index, ottInvoice);">Edit</a>
+                                                                |
+                                                                <a class="text-link" ng-click="deleteInvoice(ottInvoice); setAllRPRequiredFields();">Delete</a>
+                                                                <span ng-hide="ottInvoice.ignoreUpdates || ottInvoice.id==null">|
+                                                                    <a class="text-link" ng-click="voidInvoice(ottInvoice)">{{ottInvoice.isVoided ? 'Unvoid' : 'Void'}}</a>
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                {{ottInvoice.description.value}}
+                                                            </td>
+                                                            <td>
+                                                                {{ottInvoice.estimatedInvoiceDate.value}}
+                                                            </td>
+                                                            <td>
+                                                                {{ottInvoice.specificInvoiceDate.value}}
+                                                            </td>
+                                                            <td>
+                                                                {{ottInvoice.nsBillTo.displayValue}}
+                                                            </td>
+                                                            <td>
+                                                                <text-output field="ottInvoice.commissionAmount" ng-hide="ottInvoice.overrideCalculations"></text-output>
+                                                                <text-output field="ottInvoice.overrideCommissionAmount" ng-show="ottInvoice.overrideCalculations"></text-output>
+                                                            </td>
+                                                            <td>
+                                                                {{ottInvoice.recognizeRevenue.value}}
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div ng-show="showOTTOverlay" style="float: right;">
+                                <input type="button"
+                                       class="button"
+                                       value="Generate"
+                                       ng-click="processOTTInvoices()"
+                                       />
+                                <input type="button"
+                                       class="cancelButton"
+                                       value="Cancel"
+                                       ng-click="closeOTTOverlay()"
+                                       />
+                            </div>
+                        </div> <!-- end content -->
+                    </div> <!-- end model content -->
+                </div> <!-- end large -->
+            </div> <!-- end model container -->
+
+            <div class="section" ng-hide="isSummary || !visibleAccountingInvoices || visibleAccountingInvoices.length == 0">
+                <div class="addInvoiceButton">
+                    <a class="text-link" ng-click="addInvoice(false)">Add Invoice</a>
+                </div>
+                <div class="addOTTInvoicesButton" ng-show="pageTemplate == 'lease' && approvalStatus.value != 'Approved'">
+                    <a class="text-link" ng-click="openOTTOverlay();">Add Over the Term Invoices</a>
+                </div>
+            </div>
+
+            <table class="invoice-summary" ng-show="isSummary && visibleAccountingInvoices.length > 0">
+                <thead>
+                    <tr>
+                        <th style="text-align:left">{{invoices[0].invoiceUrl.label}}</th>
+                        <th style="text-align:left">{{invoices[0].nsBillTo.label}}</th>
+                        <th style="text-align:left">{{invoices[0].estimatedInvoiceDate.label}}</th>
+                        <th style="text-align:left">{{invoices[0].specificInvoiceDate.label}}</th>
+                        <th style="text-align:left">{{invoices[0].recognizeRevenue.label}}</th>
+                        <th style="text-align:right">{{invoices[0].subTotal.label}}</th>
+                        <th style="text-align:right">{{invoices[0].totalTaxes.label}}</th>
+                        <th style="text-align:right">{{invoices[0].totalDue.label}}</th>
+                        <th style="text-align:left">{{invoices[0].isPrinted.label}}</th>
+                        <th style="text-align:right">{{invoices[0].amountPaid.label}}</th>
+                        <th style="text-align:right">{{invoices[0].balanceDue.label}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="invoice in visibleAccountingInvoices | limitTo:invoicePaging track by $index">
+                        <td style="text-align:left"><text-output field="invoice.invoiceUrl" hide-help="true"></text-output></td>
+                        <td style="text-align:left"><text-output field="invoice.nsBillTo" hide-help="true"></text-output></td>
+                        <td style="text-align:left"><text-output field="invoice.estimatedInvoiceDate" hide-help="true"></text-output></td>
+                        <td style="text-align:left"><text-output field="invoice.specificInvoiceDate" hide-help="true"></text-output></td>
+                        <td style="text-align:left"><text-output field="invoice.recognizeRevenue" hide-help="true"></text-output></td>
+                        <td style="text-align:right"><text-output field="invoice.subTotal" hide-help="true"></text-output></td>
+                        <td style="text-align:right"><text-output field="invoice.totalTaxes" hide-help="true"></text-output></td>
+                        <td style="text-align:right"><text-output field="invoice.totalDue" hide-help="true"></text-output></td>
+                        <td style="text-align:left"><text-output field="invoice.isPrinted" hide-help="true"></text-output></td>
+                        <td style="text-align:right"><text-output field="invoice.amountPaid" hide-help="true"></text-output></td>
+                        <td style="text-align:right"><text-output field="invoice.balanceDue" hide-help="true"></text-output></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div ng-if="isSummary && visibleProFormaInvoices.length == 0 && visibleAccountingInvoices.length == 0">
+                No Invoices
+            </div>
+        </div> <!-- end invoices-container -->
+        <div ng-repeat="invoice in visibleAccountingInvoices track by $index" class="aptoField" ng-if="isOTTInvoiceSelected && invoice == originalInvoice">
+            <div class="large modal overlay">
+                <div class="modalContainer">
+                    <div ng-include="accountingInvoiceTemplate"> </div>
+                    <input type="button"
+                           class="button"
+                           value="Save"
+                           ng-click="closeOTTOverlay();"
+                           ng-hide="bulkEditAction"
+                           />
+                    <input type="button"
+                           class="button"
+                           value="Save"
+                           ng-click="closeBulkOTTOverlay();"
+                           ng-show="bulkEditAction"
+                           />
+                    <input type="button"
+                           class="cancelButton"
+                           value="Cancel"
+                           ng-click="cancelAndCloseOTTOverlay(invoice);"
+                           />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

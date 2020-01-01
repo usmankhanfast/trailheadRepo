@@ -1,0 +1,449 @@
+<div class="section-header" ng-show="isSummary">
+    <div class="header">Parties</div>
+    <a ng-hide="isRecordsLocked || isPrintMode" ng-click="setPage('parties')">Edit</a>
+    <hr/>
+</div>
+<div class="details">
+    <div ng-show="appName == 'editCommissions' && isApprovedDeal" class="notification warning">
+        <span ng-bind="labels.dealAlreadyApproved"/>
+    </div>
+    <div ng-hide="appName == 'editCommissions' && isApprovedDeal">
+        <div ng-hide="isSummary || arePartyCommissionsAllocated()" class="notification warning">
+            You have allocated {{internalPartyCommission.amount + externalPartyCommission.amount | currency : currencySymbol}} on a deal worth {{totalCommission.value | currency : currencySymbol}}. Please update Commission amounts. There is a difference of {{internalPartyCommission.amount + externalPartyCommission.amount - totalCommission.value | currency : currencySymbol}}.
+        </div>
+        <h1>External Parties</h1>
+        <div class="summary">
+            <span>External Parties Commission:</span>
+            <span ng-bind="externalPartyCommission.percent | percent : 5"></span>
+            <span>&nbsp;|&nbsp;</span>
+            <span ng-bind="externalPartyCommission.amount | currency : currencySymbol"></span>
+        </div>
+        <hr/>
+        <h2>Co-Brokers</h2>
+        <div class="table-wrap">
+            <table class="commissionTable">
+                <thead>
+                    <tr class="row">
+                        <td class="actionColumn" ng-hide="isSummary"></td>
+                        <td class="brokerColumn">Co-Broker</td>
+                        <td>Co-Broker Company</td>
+                        <td class="roleColumn">Role</td>
+                        <td class="commissionColumn" ng-hide="isSummary">Commission</td>
+                        <td class="commissionAmountColumn" ng-show="isSummary" style="text-align:right">Commission Percent</td>
+                        <td class="commissionPercentColumn" ng-show="isSummary" style="text-align:right">Commission Amount</td>
+                    </tr>
+                </thead>
+                <tbody class="hide-help">
+                    <tr class="row"
+                        ng-hide="broker.isFlaggedForDelete"
+                        ng-repeat="broker in brokers | filter:{recordType: 'External_Broker'}">
+                        <td ng-hide="isSummary">
+                            <a ng-click="$parent.deleteBroker(broker)">
+                                {{::labels.del}}
+                            </a>
+                        </td>
+                        <td>
+                            <lookup-field field="broker.brokerContact"
+                                          readonly="isSummary"
+                                          hide-help="true">
+                            </lookup-field>
+                        </td>
+                        <td>
+                            <lookup-field field="broker.client"
+                                          readonly="isSummary"
+                                          hide-help="true">
+                            </lookup-field>
+                        </td>
+                        <td>
+                            <picklist-field field="broker.role"
+                                            readonly="isSummary"
+                                            hide-help="true">
+                            </picklist-field>
+                        </td>
+                        <td class="commissionInput cell valueCol" ng-hide="isSummary">
+                            <div class="aptoField commissionInputContainer">
+                                <div>
+                                    <input type="text"
+                                        ng-model="broker.commissionPercent.value"
+                                        ng-disabled="broker.commissionType == 'Amount'"
+                                        ng-blur="setDefaultCommissionPercent($event, broker.commissionPercent)"
+                                        placeholder="{{::labels.percent}}"
+                                        min="0"
+                                        max="100"
+                                        restrict-decimals="5"/>
+                                </div>
+
+                                <div class="radioToggleContainer">
+                                    <fieldset ng-disabled="isSummary || invoice.isVoided">
+                                        <div>
+                                            <input id="coBrokerCommissionPercent{{$index}}"
+                                                type="radio"
+                                                ng-model="broker.commissionType"
+                                                value="Percent"/>
+                                            <label for="coBrokerCommissionPercent{{$index}}">
+                                                %
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <input id="coBrokerCommissionAmount{{$index}}"
+                                                type="radio"
+                                                ng-model="broker.commissionType"
+                                                value="Amount"/>
+                                            <label for="coBrokerCommissionAmount{{$index}}">
+                                                {{broker.commissionAmount.currencyIsoCode}}
+                                            </label>
+                                        </div>
+                                    </fieldset>
+                                </div>
+
+                                <div>
+                                    <input type="text"
+                                        ng-model="broker.commissionAmount.value"
+                                        ng-disabled="broker.commissionType == 'Percent'"
+                                        placeholder="{{::labels.amount}}"
+                                        restrict-decimals="2"/>
+                                </div>
+                            </div>
+                        </td>
+                        <td ng-show="isSummary" style="text-align:right">
+                            <text-output field="broker.commissionPercent"></text-output>
+                        </td>
+                        <td ng-show="isSummary" style="text-align:right">
+                            <text-output field="broker.commissionAmount"></text-output>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr ng-hide="isSummary">
+                        <td colspan="100%">
+                            <a ng-click="addBroker('External_Broker')">
+                                {{::labels.addItem}}
+                            </a>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <h2>Client Fee Share</h2>
+        <div class="table-wrap">
+            <table class="commissionTable">
+                <thead>
+                    <tr class="row">
+                        <td class="actionColumn" ng-hide="isSummary"></td>
+                        <td class="brokerColumn">Client</td>
+                        <td>Client Company</td>
+                        <td class="roleColumn">Role</td>
+                        <td class="commissionColumn" ng-hide="isSummary">Commission</td>
+                        <td class="commissionAmountColumn" ng-show="isSummary" style="text-align:right">Commission Percent</td>
+                        <td class="commissionPercentColumn" ng-show="isSummary" style="text-align:right">Commission Amount</td>
+                    </tr>
+                </thead>
+                <tbody class="hide-help">
+                    <tr class="row"
+                        ng-hide="broker.isFlaggedForDelete"
+                        ng-repeat="broker in brokers | filter:{recordType: 'Client_Fee_Share'}">
+                        <td ng-hide="isSummary">
+                            <a ng-click="$parent.deleteBroker(broker)">
+                                {{::labels.del}}
+                            </a>
+                        </td>
+                        <td>
+                            <lookup-field field="broker.brokerContact"
+                                          readonly="isSummary"
+                                          hide-help="true">
+                            </lookup-field>
+                        </td>
+                        <td>
+                            <lookup-field field="broker.client"
+                                          readonly="isSummary"
+                                          hide-help="true">
+                            </lookup-field>
+                        </td>
+                        <td>
+                            <picklist-field field="broker.role"
+                                            readonly="isSummary"
+                                            hide-help="true">
+                            </picklist-field>
+                        </td>
+                        <td ng-hide="isSummary">
+                            <div class="aptoField commissionInputContainer">
+                                <div>
+                                    <input type="text"
+                                        ng-model="broker.commissionPercent.value"
+                                        ng-disabled="broker.commissionType == 'Amount'"
+                                        ng-blur="setDefaultCommissionPercent($event, broker.commissionPercent)"
+                                        placeholder="{{::labels.percent}}"
+                                        min="0"
+                                        max="100"
+                                        restrict-decimals="5"/>
+                                </div>
+
+                                <div class="radioToggleContainer">
+                                    <fieldset ng-disabled="isSummary || invoice.isVoided">
+                                        <div>
+                                            <input id="clientFeeShareCommissionPercent{{$index}}"
+                                                type="radio"
+                                                ng-model="broker.commissionType"
+                                                value="Percent"/>
+                                            <label for="clientFeeShareCommissionPercent{{$index}}">
+                                                %
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <input id="clientFeeShareCommissionAmount{{$index}}"
+                                                type="radio"
+                                                ng-model="broker.commissionType"
+                                                value="Amount"/>
+                                            <label for="clientFeeShareCommissionAmount{{$index}}">
+                                                {{broker.commissionAmount.currencyIsoCode}}
+                                            </label>
+                                        </div>
+                                    </fieldset>
+                                </div>
+
+                                <div>
+                                    <input type="text"
+                                        ng-model="broker.commissionAmount.value"
+                                        ng-disabled="broker.commissionType == 'Percent'"
+                                        placeholder="{{::labels.amount}}"
+                                        restrict-decimals="2"/>
+                                </div>
+                            </div>
+                        </td>
+                        <td ng-show="isSummary" style="text-align:right">
+                            <text-output field="broker.commissionPercent"></text-output>
+                        </td>
+                        <td ng-show="isSummary" style="text-align:right">
+                            <text-output field="broker.commissionAmount"></text-output>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr class="row"
+                        ng-hide="isSummary">
+                        <td colspan="100%">
+                            <a ng-click="addBroker('Client_Fee_Share')">
+                                {{::labels.addItem}}
+                            </a>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="block sectionBlock">
+            <h1>AY Brokers</h1>
+            <div class="summary">
+                <span>Internal Gross Commission:</span>
+                <span ng-bind="(internalPartyCommission.percent) | percent : 5"></span>
+                <span>|</span>
+                <span ng-bind="internalPartyCommission.amount | currency : currencySymbol"></span>
+            </div>
+        </div>
+        <hr/>
+        <div class="table-wrap">
+            <table class="commissionTable">
+                <thead>
+                    <tr class="row">
+                        <td class="actionColumn" ng-hide="isSummary"></td>
+                        <td class="brokerColumn">Broker</td>
+                        <td>Primary Broker</td>
+                        <td>Market/Cost Center</td>
+                        <td class="preferentialSplitColumn" ng-if="showRPDealWizard" style="text-align:right">Preferential Split</td>
+                        <td class="roleColumn">Role</td>
+                        <td class="commissionColumn" ng-hide="isSummary">Commission</td>
+                        <td class="commissionAmountColumn" ng-show="isSummary" style="text-align:right">Commission Percent</td>
+                        <td class="commissionPercentColumn" ng-show="isSummary" style="text-align:right">Commission Amount</td>
+                    </tr>
+                </thead>
+                <tbody class="hide-help">
+                    <tr class="row"
+                        ng-hide="broker.isFlaggedForDelete"
+                        ng-repeat="broker in brokers | filter:{recordType:'Internal_Broker'}">
+                        <td ng-hide="isSummary">
+                            <a ng-click="$parent.deleteBroker(broker)">
+                                {{::labels.del}}
+                            </a>
+                        </td>
+                        <td>
+                            <lookup-field field="broker.broker"
+                                          readonly="isSummary"
+                                          hide-help="true">
+                            </lookup-field>
+                        </td>
+                        <td class="primary-broker-cell" ng-class="{'rpRequired': primaryBrokerMissing}">
+                            <boolean-field field="broker.primaryBroker"
+                                           disabled="isSummary"
+                                           hide-help="true"
+                                           on-field-change="setAllRPRequiredFields()">
+                            </boolean-field>
+                        </td>
+                        <td>
+                            <span ng-bind="broker.costCenter"></span>
+                        </td>
+                        <td ng-if="showRPDealWizard" style="text-align:right">
+                            <input type="checkbox"
+                                   ng-model="broker.usePreferentialSplit"
+                                   ng-hide="isSummary">
+                            </input>
+                            <span ng-show="broker.usePreferentialSplit">
+                                <text-field field="broker.preferentialSplit"
+                                            readonly="isSummary"
+                                            hide-help="true"
+                                            precision="5">
+                                </text-field>
+                            </span>
+                        </td>
+                        <td>
+                            <picklist-field field="broker.role"
+                                            readonly="isSummary"
+                                            hide-help="true">
+                            </picklist-field>
+                        </td>
+                        <td ng-hide="isSummary">
+                            <div class="aptoField commissionInputContainer">
+                                <div>
+                                    <input type="text"
+                                        ng-model="broker.commissionPercent.value"
+                                        ng-disabled="broker.commissionType == 'Amount'"
+                                        ng-blur="setDefaultCommissionPercent($event, broker.commissionPercent)"
+                                        placeholder="{{::labels.percent}}"
+                                        min="0"
+                                        max="100"
+                                        restrict-decimals="5"/>
+                                </div>
+
+                                <div class="radioToggleContainer">
+                                    <fieldset ng-disabled="isSummary || invoice.isVoided">
+                                        <div>
+                                            <input id="brokerCommissionPercent{{$index}}"
+                                                type="radio"
+                                                ng-model="broker.commissionType"
+                                                value="Percent"/>
+                                            <label for="brokerCommissionPercent{{$index}}">
+                                                %
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <input id="brokerCommissionAmount{{$index}}"
+                                                type="radio"
+                                                ng-model="broker.commissionType"
+                                                value="Amount"/>
+                                            <label for="brokerCommissionAmount{{$index}}">
+                                                {{broker.commissionAmount.currencyIsoCode}}
+                                            </label>
+                                        </div>
+                                    </fieldset>
+                                </div>
+
+                                <div>
+                                    <input type="text"
+                                        ng-model="broker.commissionAmount.value"
+                                        ng-disabled="broker.commissionType == 'Percent'"
+                                        placeholder="{{::labels.amount}}"
+                                        restrict-decimals="2"/>
+                                </div>
+                            </div>
+                        </td>
+                        <td ng-show="isSummary" style="text-align:right">
+                            <text-output field="broker.commissionPercent"></text-output>
+                        </td>
+                        <td ng-show="isSummary" style="text-align:right">
+                            <text-output field="broker.commissionAmount"></text-output>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr class="row" ng-hide="isSummary">
+                        <td colspan="100%">
+                            <a ng-click="addBroker('Internal_Broker')">
+                                {{::labels.addItem}}
+                            </a>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div ng-hide="isSummary || arePartyCommissionsAllocated()" class="notification warning">
+            You have allocated {{internalPartyCommission.amount + externalPartyCommission.amount | currency : currencySymbol}} on a deal worth {{totalCommission.value | currency : currencySymbol}}. Please update Commission amounts. There is a difference of {{internalPartyCommission.amount + externalPartyCommission.amount - totalCommission.value | currency : currencySymbol}}.
+        </div>
+        <div class="block clearfix">
+            &nbsp;
+            <div class="summary" style="padding-right:3px">
+                <span>AY Broker Allocation:</span>
+                <span ng-bind="ayBrokerAllocation.percent | percent : 5"></span>
+                <span>|</span>
+                <span ng-bind="ayBrokerAllocation.amount | currency : currencySymbol"></span>
+            </div>
+        </div>
+        <hr/>
+        <div class="block clearfix">
+            &nbsp;
+            <div class="summary">
+                <div style="padding-right:3px" ng-style="!arePartyCommissionsAllocated() && {'color' : 'red'}">
+                    Deal Total: {{ (internalPartyCommission.percent + externalPartyCommission.percent | percent : 5) }} | {{internalPartyCommission.amount + externalPartyCommission.amount | currency : currencySymbol}}
+                </div>
+                <div style="text-align:right">
+                    {{::labels.totalTotalCommission}}:
+                    <currency-output field="totalCommission"
+                                     readonly="isSummary"
+                                     hide-help="true"/>
+                </div>
+            </div>
+        </div>
+        <div class="progressModal" ng-show="showConfirmPrimaryBrokerChange">
+            <div class="modal overlay">
+                <div class="modalContainer">
+                    <div class="title">
+                        <div class="center inline-block">
+                            <span>
+                                Confirm Primary Broker Change
+                            </span>
+                        </div>
+                    </div>
+                    <br/>
+                    <br/>
+                    <div class="resultsLabel">
+                        <p>You have selected a primary broker from a different subsidiary.</p>
+                        <p>This will clear the NetSuite Bill To fields on all invoices associated with this deal, and you will need to specify new NetSuite Bill To information.</p>
+                        <p>Please click Cancel to revert this change or Confirm to continue.</p>
+                    </div>
+                    <div class="buttons-container">
+                        <input type="button"
+                               class="cancelButton"
+                               value="Cancel"
+                               ng-click="confirmPrimaryBrokerChange(false);"/>
+                        <input type="button"
+                               class="button"
+                               value="Confirm"
+                               ng-click="confirmPrimaryBrokerChange(true);"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="progressModal" ng-show="showConfirmPrimaryBrokerChangeOnPaidInvoices">
+            <div class="modal overlay">
+                <div class="modalContainer">
+                    <div class="title">
+                        <div class="center inline-block">
+                            <span>
+                                Primary Broker Changed With Paid Invoices
+                            </span>
+                        </div>
+                    </div>
+                    <br/>
+                    <br/>
+                    <div class="resultsLabel">
+                        <p>You have selected a primary broker from a different subsidiary and you have paid invoices.</p>
+                        <p>Please unapply any payments in order to change the Bill To on invoices.</p>
+                    </div>
+                    <div class="buttons-container">
+                        <input type="button"
+                               class="cancelButton"
+                               value="Cancel"
+                               ng-click="confirmPrimaryBrokerChange(false);"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

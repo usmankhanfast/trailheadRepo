@@ -1,0 +1,36 @@
+<div class="help">
+    <ng-include="getTemplate('helpIcon')"/>
+</div>
+<div class="aptoField" ng-class="{requiredInput: field.isRequired}" ng-hide="readonly">
+    <div class="requiredBlock" ng-if="field.isRequired">
+    </div>
+    <input type="hidden" name="{{::baseId}}_lkid" id="{{::baseId}}_lkid" ng-model="field.value"/>
+    <input type="hidden" name="{{::baseId}}_lkold" id="{{::baseId}}_lkold" value="null"/>
+    <input type="hidden" name="{{::baseId}}_lspf" id="{{::baseId}}_lspf" value="0"/>
+    <input type="hidden" name="{{::baseId}}_lspfsub" id="{{::baseId}}_lspfsub" value="0"/>
+    <span class="lookupInput">
+        <a id="{{::baseId}}_lkwgt"
+           onclick="setLastMousePosition(event)"
+           ng-click="openLookup();"
+           title="{{::field.label}} Lookup (New Window)">
+               <img ng-src="{{getImageBase()}}/Lookup_Icon.png"
+                    alt="{{::field.label}} Lookup (New Window)"
+                    title="{{::field.label}} Lookup (New Window)" />
+        </a>
+        <input id="{{::baseId}}"
+               ng-click="openLookup();"
+               maxlength="255"
+               style="cursor: pointer;"
+               name="{{::baseId}}"
+               ng-disabled="disabled"
+               size="20"
+               type="text"
+               tabindex="-1"
+               ng-model="field.displayValue"
+               ng-required="field.isRequired"
+               ng-change="field.value = ''"
+        />
+        <button class="clear-button" ng-show="field.value" ng-click="clearLookup()"></button>
+    </span>
+</div>
+<text-output ng-show="readonly" field="field" hide-help="true"/>

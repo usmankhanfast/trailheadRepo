@@ -1,0 +1,28 @@
+<div class="help" ng-if="hideHelp != 'true'">
+    <ng-include="getTemplate('helpIcon')"/>
+</div>
+<div class="aptoField"
+     ng-class="{requiredInput: field.isRequired}"
+     ng-hide="readonly"
+     >
+    <div class="requiredBlock"
+        ng-if="field.isRequired">
+    </div>
+    <textarea id="{{::baseId}}"
+              maxlength="{{maxlength || 255}}"
+              name="{{::baseId}}"
+              size="{{size || 20}}"
+              cols="{{cols}}"
+              class="{{class}}"
+              rows="{{rows || field.rows || field.defaultRows}}"
+              type="text"
+              ng-disabled="disabled"
+              ng-model="field.value"
+              ng-required="field.isRequired"
+        >
+    </textarea>
+</div>
+<text-output ng-show="readonly"
+    field="field"
+    multiline="multiline"
+    hide-help="true"/>

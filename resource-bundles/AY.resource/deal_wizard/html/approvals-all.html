@@ -1,0 +1,158 @@
+<div class="invoices">
+    <div class="section-header"
+        ng-show="isSummary">
+        <div class="header">
+            Approval
+        </div>
+        <hr/>
+    </div>
+    <div class="buttons-container"
+         ng-show="approvalStatus.value !== 'Approved' && !isPrintMode && isCurrentApprover">
+        <div class="section">
+            <div class="center inline-block">
+                <div class="top">
+                    <h5>
+                        {{::sale.comments.label}}
+                    </h5>
+                </div>
+                <textarea-field class="fixedSizeTextarea" maxlength="-1" field="comments"
+                    multiline="true"/>
+            </div>
+        </div>
+        <br/>
+        <br/>
+        <input type="button"
+               class="rejectButton"
+               value="{{::labels.rejectDeal}}"
+               ng-click="reject()"
+               ng-show="page.toLowerCase().includes('summary') && approvalStarted && isCurrentApprover"
+               />
+        <input type="button"
+               class="approveButton"
+               value="{{::labels.approveDeal}}"
+               ng-click="submit(true, false)"
+               ng-show="page.toLowerCase().includes('summary') && approvalStarted && isCurrentApprover"
+               />
+        <input type="button"
+               class="button"
+               value="Process Deal"
+               ng-click="submit(true, true)"
+               ng-show="page.toLowerCase().includes('summary') && !approvalStarted && isCurrentApprover"
+               />
+    </div>
+    <h1>
+        Approval History
+    </h1>
+    <div class="table-wrap">
+        <table>
+        <div ng-show="currentApproverNames">
+            <br/>
+            Awaiting approval by {{currentApproverNames}}
+        </div>
+            <thead>
+                <tr>
+                    <th>
+                        {{::labels.startDate}}
+                    </th>
+                    <th>
+                        {{::approvalSteps[0].approvalRejectionDate.label}}
+                    </th>
+                    <th>
+                        {{::approvalSteps[0].status.label}}
+                    </th>
+                    <th>
+                        {{::approvalSteps[0].assignedTo.label}}
+                    </th>
+                    <th>
+                        {{::approvalSteps[0].comments.label}}
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="hide-help">
+                <tr ng-repeat="approval in approvalSteps">
+                    <td>
+                        <date-field hide-help="true"
+                                    readonly="true"
+                                    field="approval.createdDate"
+                                    />
+                    </td>
+                    <td>
+                        <date-field hide-help="true"
+                                    readonly="true"
+                                    field="approval.approvalRejectionDate"
+                                    />
+                    </td>
+                    <td>
+                        <picklist-field hide-help="true"
+                                        readonly="true"
+                                        field="approval.status"
+                                        />
+                    </td>
+                    <td>
+                        <lookup-field hide-help="true"
+                                    readonly="true"
+                                    field="approval.assignedTo"
+                                    />
+                    </td>
+                    <td class="tdColumnFixedWidth">
+                        <textarea-field hide-help="true"
+                                    readonly="true"
+                                    field="approval.comments"
+                                    />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="progressModal" ng-show="approvalMessage || rejectionMessage">
+        <div class="modal overlay">
+            <div class="modalContainer">
+                <div class="closeButton">
+                    <a ng-click="closeModal();">
+                        <img ng-src="{{imageBase}}/Close.png"
+                            alt="Close"
+                            title="Close" />
+                    </a>
+                </div>
+                <div class="title">
+                    <div class="center inline-block">
+                        <span>
+                            {{approvalTitle}}
+                        </span>
+                    </div>
+                </div>
+                <br/>
+                <br/>
+                <div class="resultsLabel" ng-show="approvalMessage">
+                    {{approvalMessage}}
+                </div>
+                <div ng-show="rejectionMessage">
+                    <div class="resultsLabel">
+                        {{rejectionMessage}}
+                    </div>
+                    <div class="section">
+                        <div class="center inline-block">
+                                <h5>
+                                {{::approvalSteps[0].rejectionReason.label}}
+                                </h5>
+                                <picklist-field
+                                        field="approvalSteps[0].rejectionReason"/>
+                        </div>
+                    </div>
+                    <div class="buttons-container">
+                        <input type="button"
+                               class="cancelButton"
+                               value="Cancel"
+                               ng-click="closeModal();"
+                               />
+                        <input type="button"
+                               class="button"
+                               value="Reject Deal"
+                               ng-click="submit(false, false);"
+                               />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

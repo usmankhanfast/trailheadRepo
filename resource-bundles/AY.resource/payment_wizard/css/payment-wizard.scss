@@ -1,0 +1,912 @@
+
+@import '../../css/color-vars';
+@import '../../css/action-buttons';
+@import '../../css/notification-area';
+@import '../../css/content-section';
+@import '../../css/lookupField';
+@import '../../css/netsuitesearchField';
+@import '../../css/summary';
+@import '../../css/spinner';
+@import '../../css/breadcrumbs';
+@import '../../vfHelpers/vfHelpers';
+@import '../../css/sectionField';
+
+deal-wizard div {
+    & h1 {
+        font-size: 20px;
+    }
+
+    & h3 {
+        font-size: 16px;
+    }
+}
+@mixin border-radius($radius) {
+  -webkit-border-radius: $radius;
+     -moz-border-radius: $radius;
+      -ms-border-radius: $radius;
+          border-radius: $radius;
+}
+
+.float-left {
+    float: left;
+}
+
+.float-right {
+    float: right;
+}
+
+.block {
+    display: block;
+}
+
+div#content-wizard {
+    width: 95%;
+    height: 100%;
+    display: block;
+    padding-top: 10px;
+    padding-left: 20px;
+}
+
+div#tabContent {
+  width: 100%;
+  max-width: 1300px;
+  overflow:hidden;
+}
+
+fieldset {
+    border: none;
+
+    &[disabled] {
+        cursor: default !important;
+
+        a {
+            display: none;
+        }
+
+        * {
+            cursor: default !important;
+        }
+    }
+}
+
+div.hideCurrDate span.dateInput span.dateFormat {
+    display:none;
+}
+
+span.dateFormat a {
+    vertical-align: middle;
+}
+
+.center-text {
+    text-align:center;
+}
+
+.errorMsg {
+    display:none;
+}
+
+.overAllocated {
+    background: #FF4C4C;
+}
+
+.section {
+    display: table;
+    width: 100%;
+
+    .row {
+        display: table-row;
+
+        >.cell {
+            display: table-cell;
+            padding: 0 5px;
+            vertical-align: middle;
+            white-space: nowrap;
+            width: 50%;
+
+            &.labelCol {
+                padding-left: 50px;
+            }
+
+            &.valueCol {
+                padding-right: 50px;
+
+                > div {
+                    display: inline-block;
+                }
+
+                .text-link {
+                    margin-left: 8px;
+                }
+            }
+
+            &.labelCol, &.valueCol {
+                width: 25%;
+            }
+
+            &.linkCol {
+                border-right: 1px solid lightgray;
+                text-align: center;
+                vertical-align: top;
+                width: 0;
+
+                > div:first-child {
+                    margin-top: 18px;
+                    width: 140px;
+                }
+            }
+        }
+    }
+
+    table.invoice {
+        border-spacing: 0;
+        border: 1px solid lightgray;
+        padding: 3px;
+        width: 100%;
+
+        tr {
+            td {
+                padding: 2px 5px !important;
+
+                &.emptyCell {
+                    line-height: 32px;
+                }
+
+                &.labelCol {
+                    min-width: 180px;
+                }
+
+                &.labelCol:first-child {
+                    width: 16%
+                }
+
+                &.labelCol, &.valueCol {
+                    width: 28%;
+                }
+
+                textarea {
+                    min-width: 220px;
+                }
+            }
+        }
+
+        &.voided {
+            background-image: url(../../images/voidedInvoiceBackground.jpg);
+        }
+
+        table.innerSection {
+            border: none;
+            table-layout: fixed;
+        }
+
+        .billToAddress {
+            min-height: 100px;
+        }
+
+        .commissionInputContainer {
+            margin-left: 13px;
+        }
+    }
+}
+
+.buttons-container {
+    text-align: center;
+    margin: 10px;
+}
+
+.linkCol {
+    color: #39f !important;
+}
+
+.text-link {
+    color: #39f !important;
+    text-decoration: none;
+}
+
+.invoices-container {
+    margin: 8px 0;
+
+    .section {
+        margin: 0;
+        width: 100%;
+    }
+}
+
+.addInvoiceButton {
+    margin: 5px 8px;
+}
+
+.section-header {
+    margin-top: 15px;
+
+    .header {
+        display: inline-block;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    a {
+        @extend .text-link;
+        margin: 0 0 0 10px;
+    }
+}
+
+.commissionTable tbody tr td * {
+    display: inline-block;
+}
+
+.notification {
+    margin: 10px;
+    background-color: #d9edf6;
+    border: 1px solid #39f;
+    @include border-radius(4px);
+    color: black;
+    padding: 8px;
+    text-align: center;
+}
+
+.error{
+    background-color: #F6D9D9;
+    border: 1px solid #F33;
+}
+
+.warning {
+    background-color: #fcf8cd;
+    border: 1px solid #ed1c24;
+}
+
+.navigation-container {
+    text-align: center;
+}
+
+.paymentsSummary {
+    display: table;
+    width: 100%;
+
+    div {
+        display: table-cell;
+
+        &.paymentTotals {
+            text-align: right;
+
+            .paymentLabels, .paymentValues {
+                display: inline-block;
+
+                div {
+                    display: block;
+                    margin: 2px;
+                }
+
+                .labelCol {
+                    padding: 2px;
+                }
+            }
+        }
+    }
+}
+
+.commissionInputContainer {
+    display: table !important;
+
+    div {
+        display: table-cell;
+        vertical-align: middle;
+    }
+
+    input {
+        &[type="text"], &[type="number"] {
+            width: 70px;
+
+            &[disabled] {
+                background-color: lightgray;
+                border: 1px inset;
+            }
+        }
+    }
+}
+
+.unbilledGrossCommission {
+    color: green;
+
+    &.invalid {
+        color: red;
+    }
+}
+
+.radioToggleContainer {
+    font-size: 0;
+    margin: 3px;
+    display: flex !important;
+}
+
+.radioToggleTd {
+    table {
+        border-spacing: 0;
+
+        fieldset {
+            margin: 0;
+            padding: 0;
+
+            td {
+                @extend fieldset;
+
+                label {
+                    @extend td;
+                }
+            }
+        }
+
+        tbody {
+            display: block;
+        }
+
+        .dataCell {
+            padding: 0;
+        }
+
+        tr.dataRow {
+            line-height: 0;
+        }
+    }
+}
+
+input[type=radio] {
+    display: none;
+}
+
+input[type=radio]+label {
+    @include border-radius(5px);
+    min-width: 35px;
+    display: inline-block;
+    padding: 0;
+    margin-bottom: 0;
+    font-size: 11px;
+    height: 22px;
+    line-height: 23px;
+    padding: 0 1px 1px 1px;
+    color: black;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background: white;
+    background-repeat: repeat-x;
+    border: 1px solid #cccccc;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff',
+        endColorstr='#ffe6e6e6', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px
+        rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px
+        rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px
+        rgba(0, 0, 0, 0.05);
+}
+
+input[type=radio]:checked+label {
+    color: white;
+    text-align: center;
+    background-image: none;
+    outline: 0;
+    -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px
+        rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px
+        rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px
+        rgba(0, 0, 0, 0.05);
+    background-color: #007bb4;
+}
+
+div.table-wrap {
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid $tableHeadBorderColor;
+        margin: 3px 0 5px;
+
+        thead {
+            border-bottom: 1px solid $tableHeadBorderColor;
+            font-weight: bold;
+        }
+
+        thead, tfoot, tr.footer {
+            background: $tableHeadBgColor;
+        }
+
+        td, th {
+            padding: 5px 10px;
+            border-bottom: 1px solid $tableHeadBorderColor;
+            vertical-align: middle;
+        }
+
+        .sub-row td {
+            border-bottom: 0px;
+        }
+
+        .totals-row {
+            background: #ffffff;
+            border: 1px solid #ffffff;
+            font-weight: bold;
+
+            td {
+                border: 1px solid #ffffff;
+            }
+        }
+    }
+}
+
+.brokersTable {
+    tr td:nth-child(4), tr td:nth-child(5), tr td:nth-child(6) {
+         max-width:70px;
+        min-width:70px;
+        text-align:right;
+    }
+}
+
+.allocationTable {
+    margin-bottom:12px;
+    min-width:800px;
+    max-width:1200px;
+
+    thead tr th {
+        white-space:normal;
+    }
+
+    tr {
+        display:table-row;
+        max-width:1100px;
+
+        td:last-child {
+            max-width:70px;
+            min-width:70px;
+            text-align:right;
+        }
+    }
+
+    th, td {
+        border: 1px solid #DDDDDD;
+    }
+}
+
+#taxTable {
+
+    td {
+        width: 11%;
+        text-align: right;
+    }
+
+    td:nth-of-type(1){
+        width: 20%;
+        text-align: left;
+    }
+    td:nth-of-type(2){
+        width: 25%;
+    }
+
+    th {
+        width: 11%;
+        text-align: right;
+    }
+
+    th:nth-of-type(1){
+        width: 20%;
+        text-align: left;
+    }
+    th:nth-of-type(2){
+        width: 25%;
+    }
+    .redText  {
+        color: #ff0000;
+    }
+}
+
+#expensesTable {
+    tr td:nth-child(3), tr td:nth-child(4), tr td:nth-child(5) {
+        max-width:70px;
+        min-width:70px;
+        text-align:right;
+    }
+    .redText  {
+        color: #ff0000;
+    }
+}
+
+#ayBrokerTable, .clientFeeShareTable {
+
+    td {
+        width: 11%;
+        text-align: right;
+        word-wrap: break-word;
+    }
+    td:nth-of-type(1){
+        width: 10%;
+        text-align: left;
+    }
+    td:nth-of-type(2){
+        width: 11%;
+        text-align: left;
+    }
+    td:nth-of-type(3){
+        width: 13%;
+        text-align: left;
+    }
+
+
+    th {
+        width: 11%;
+        text-align: right;
+        word-wrap: break-word;
+    }
+    th:nth-of-type(1){
+        width: 10%;
+        text-align: left;
+    }
+    th:nth-of-type(2){
+        width: 11%;
+        text-align: left;
+    }
+    th:nth-of-type(3){
+        width: 13%;
+        text-align: left;
+    }
+
+    .redText  {
+        color: #ff0000;
+    }
+}
+
+.invoiceTable {
+
+    td {
+        width: 10%;
+        text-align: right;
+        word-wrap: break-word;
+    }
+    td:nth-of-type(1){
+        width: 5%;
+        text-align: left;
+    }
+    td:nth-of-type(2){
+        text-align: left;
+    }
+    td:nth-of-type(3){
+        width: 8%;
+    }
+    td:nth-of-type(9){
+        width: 11%;
+    }
+    td:nth-of-type(10){
+        width: 11%;
+    }
+
+    th {
+        width: 10%;
+        text-align: right;
+        word-wrap: break-word;
+    }
+    th:nth-of-type(1){
+        width: 5%;
+        text-align: left;
+    }
+    th:nth-of-type(2){
+        text-align: left;
+    }
+    th:nth-of-type(3){
+        width: 8%;
+    }
+    th:nth-of-type(9){
+        width: 11%;
+    }
+    th:nth-of-type(10){
+        width: 11%;
+    }
+
+    .redText  {
+        color: #ff0000;
+    }
+}
+
+#expensesTable {
+
+    td {
+        width: 11%;
+        text-align: right;
+        word-wrap: break-word;
+    }
+
+    td:nth-of-type(1){
+        width: 17%;
+        text-align: left;
+    }
+    td:nth-of-type(2){
+        width: 17%;
+        text-align: left;
+    }
+
+    th {
+        width: 11%;
+        text-align: right;
+        word-wrap: break-word;
+    }
+
+    th:nth-of-type(1){
+        width: 17%;
+        text-align: left;
+    }
+    th:nth-of-type(2){
+        width: 17%;
+        text-align: left;
+    }
+
+
+    .redText  {
+        color: #ff0000;
+    }
+}
+
+.payInvoicesTable {
+    .redText  {
+        color: #ff0000;
+    }
+}
+
+.allocationTotals {
+    float:right;
+
+    .totalsLabel {
+        padding-right:10px;
+        width: 220px;
+    }
+
+    .totalsValue {
+        padding-right:12px;
+        float:right;
+    }
+}
+
+.paymentInfo {
+  float:left;
+}
+.paymentInfo .textAlign{
+  text-align: left;
+}
+.paymentInfo .fontWeight{
+  font-weight: bold;
+}
+
+.allocationDetails {
+    padding-top:14px;
+    .redText {
+        color: #ff0000;
+    }
+}
+
+body .content {
+    padding: 0 10px;
+}
+
+.aptoField .overlay > .modalContainer > .content {
+    padding: 0;
+}
+
+#fileSection {
+    margin-top: -6px;
+}
+
+.row {
+    height: 35px;
+}
+
+.row label, .progress-status .progress-text
+{
+    width: 200px;
+    text-align: right;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.lookupInput {
+    display: inline-block;
+}
+
+.clear-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0px;
+    height: 100%;
+    border: solid 1px #dddddd;
+    border-radius: 0px 5px 5px 0px;
+    cursor: pointer;
+    -moz-border-radius: 0px 5px 5px 0px;
+    -webkit-border-radius: 0px 5px 5px 0px;
+}
+
+.clear-button:after {
+    content: 'X'; /* UTF-8 symbol */
+}
+
+@-webkit-keyframes progress-bar-stripes {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 40px 0;
+    }
+}
+@-moz-keyframes progress-bar-stripes {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 40px 0;
+    }
+}
+@-ms-keyframes progress-bar-stripes {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 40px 0;
+    }
+}
+@keyframes progress-bar-stripes {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 40px 0;
+    }
+}
+
+.progress-status {
+    display: inline-block;
+
+    margin-top: -6px;
+}
+
+.progress-bar-container {
+    display: inline-block;
+
+    width: 80%;
+    height: 26px;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-top: 8px;
+    margin-bottom: 8px;
+
+    vertical-align: middle;
+
+    border-radius: 5px;
+    background-color: #ddd;
+}
+
+.progress-bar {
+    display: inline-block;
+
+    height: inherit;
+
+    -webkit-animation: progress-bar-stripes 2s linear infinite;
+       -moz-animation: progress-bar-stripes 2s linear infinite;
+        -ms-animation: progress-bar-stripes 2s linear infinite;
+            animation: progress-bar-stripes 2s linear infinite;
+
+    border-radius: 5px;
+    background-color: #007bb4;
+    background-image: linear-gradient(
+        45deg,
+        rgba(255,255,255,.4) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255,255,255,.4) 50%,
+        rgba(255,255,255,.4) 75%,
+        transparent 75%,
+        transparent);
+    background-size: 40px 40px;
+}
+
+.progressModal .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100; /* Salesforce Menu Button is 70 */
+  background-color: rgba(0,0,0,0.5); /*dim the background*/
+
+
+  > .modalContainer {
+    //height: 300px; leaving this commented out for now in case we need to re-introduce
+    width: 400px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -100px;
+    margin-left: -200px;
+    border-radius: 5px;
+    z-index: 101;
+    background-color: white;
+    border: 1px solid #959595;
+    overflow: hidden;
+    padding: 15px 20px;
+
+    span {
+      display: inline;
+      white-space: nowrap;
+      width: auto;
+    }
+
+
+    > .resultsLabel {
+        margin: 16px 0px;
+        word-wrap: break-word;
+    }
+
+    > .progress-status {
+        display: inline-block;
+
+        margin-top: -6px;
+    }
+
+    > .progress-bar-container {
+        display: inline-block;
+
+        width: 200px;
+        height: 26px;
+
+        top: 50%;
+        left: 70%;
+        margin-top: -10px;
+        margin-left: -20px;
+
+        border-radius: 5px;
+        background-color: #ddd;
+    }
+
+    > .progress-bar {
+        display: inline-block;
+
+        height: inherit;
+
+        -webkit-animation: progress-bar-stripes 2s linear infinite;
+           -moz-animation: progress-bar-stripes 2s linear infinite;
+            -ms-animation: progress-bar-stripes 2s linear infinite;
+                animation: progress-bar-stripes 2s linear infinite;
+
+        border-radius: 5px;
+        background-color: #007bb4;
+        background-image: linear-gradient(
+            45deg,
+            rgba(255,255,255,.4) 25%,
+            transparent 25%,
+            transparent 50%,
+            rgba(255,255,255,.4) 50%,
+            rgba(255,255,255,.4) 75%,
+            transparent 75%,
+            transparent);
+        background-size: 40px 40px;
+    }
+
+    > div.closeButton {
+      top: 0px;
+      right: 0px;
+      float: right;
+      position: relative;
+      background-color: white;
+      border: none;
+      margin-right: 5px;
+      margin-top: 5px;
+      width: 20px;
+      height: 20px;
+
+      > a > img {
+        width: 18px;
+      }
+    }
+
+    > .title {
+      width: inherit;
+      font-size: 18px;
+      font-weight: bold;
+      height: 21px;
+    }
+  }
+}

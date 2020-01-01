@@ -1,0 +1,181 @@
+<table class="invoice section">
+    <tr class="row">
+        <td class="cell linkCol">
+            <div>
+                <a class="text-link"
+                    ng-click="copyInvoice($index+1, invoice)">
+                    Copy
+                </a>
+                <span ng-hide="isSummary || appName == 'editInvoices' && !isComp"> | </span>
+                <a class="text-link"
+                    ng-hide="appName == 'editInvoices' && !isComp"
+                    ng-click="convertInvoice(invoice)">
+                    Convert
+                </a>
+                <span ng-hide="isSummary"> | </span>
+                <a class="text-link"
+                    ng-class="{'disabled': invoice.id != null && approvalStatus.value == 'Approved'}"
+                    ng-click="deleteInvoice(invoice)">
+                    Delete
+                </a>
+            </div>
+        </td>
+        <td>
+            <table class="invoice section innerSection">
+                <tr class="row">
+                    <td class="cell labelCol vfLabelColTextWrap">
+                        {{::invoice.invoiceUrl.label}}
+                    </td>
+                    <td class="cell valueCol">
+                        <text-field field="invoice.invoiceUrl"
+                            readonly="true"/>
+                    </td>
+                    <td class="cell labelCol vfLabelColTextWrap">
+                        {{::invoice.proformaAmount.label}}
+                    </td>
+                    <td class="cell valueCol">
+                        <text-field field="invoice.proformaAmount"
+                            readonly="isSummary"
+                            precision="2"/>
+                    </td>
+                </tr>
+                <tr class="row">
+                    <td class="cell labelCol vfLabelColTextWrap"
+                        ng-hide="isSummary">
+                        {{::invoice.useDefaultValues.label}}
+                    </td>
+                    <td class="cell valueCol"
+                        ng-hide="isSummary">
+                        <boolean-field field="invoice.useDefaultValues"
+                            on-field-change="setDefaultInvoiceValues(invoice)"/>
+                    </td>
+                    <td class="cell labelCol vfLabelColTextWrap">
+                        {{::invoice.trustAmount.label}}
+                    </td>
+                    <td class="cell valueCol">
+                        <text-field field="invoice.trustAmount"
+                            readonly="isSummary"
+                            precision="2"/>
+                    </td>
+                </tr>
+                <tr class="row">
+                    <td class="cell labelCol vfLabelColTextWrap">
+                        {{::invoice.aptoBillTo.label}}
+                    </td>
+                    <td class="cell valueCol">
+                        <lookup-field field="invoice.aptoBillTo"
+                            readonly="isSummary || invoice.useDefaultValues.value"
+                            on-field-change="setInvoiceBillToAddressFromAccount(invoice, invoice.aptoBillTo.value)"/>
+                    </td>
+                    <td class="cell labelCol vfLabelColTextWrap">
+                        {{::invoice.taxGroup.label}}
+                    </td>
+                    <td class="cell valueCol">
+                         <picklist-field field="invoice.taxGroup" disabled="enableTaxGroup(invoice)" readonly="isSummary || invoice.isVoided || invoice.useDefaultValues.value"/>
+                    </td>
+                </tr>
+                <tr class="row">
+                    <td class="cell labelCol vfLabelColTextWrap">
+                        {{::invoice.nsBillTo.label}}
+                    </td>
+                    <td class="cell valueCol">
+                        <netsuite-search-field field="invoice.nsBillTo"
+                            readonly="isSummary || invoice.useDefaultValues.value"
+                            disable-search="invoice.useDefaultValues.value"
+                            endpoint="getNetSuiteData.getCustomersLong"
+                            is-vendor="true"
+                            broker-id="primaryBroker.broker.value"
+                            require-broker="true"
+                            require-broker-msg="Unknown Subsidiary - have you identified a Primary Broker on the Parties page?"
+                            on-field-change="setInvoiceBillToAddress(invoice, invoice.nsBillTo.formattedAddress)"/>
+                    </td>
+                    <td class="cell labelCol vfLabelColTextWrap">
+                        {{::invoice.dueUpon.label}}
+                    </td>
+                    <td class="cell valueCol">
+                        <picklist-field field="invoice.dueUpon"
+                            readonly="isSummary"/>
+                    </td>
+                </tr>
+                <tr class="row">
+                    <td class="cell labelCol vfLabelColTextWrap addressLabel2">
+                        {{::invoice.billToAddress.label}}
+                    </td>
+                    <td class="cell valueCol"
+                        rowspan="2">
+                        <div class="billToAddress">
+                            <textarea-field field="invoice.billToAddress"
+                                            multiline="true"
+                                            readonly="invoice.nsBillTo.value"/>
+                        </div>
+                    </td>
+                    <td class="cell labelCol vfLabelColTextWrap">
+                        Pro-Forma Date
+                    </td>
+                    <td class="cell valueCol">
+                        <date-field field="invoice.estimatedInvoiceDate"
+                            readonly="isSummary"
+                            hide-today-date="true"/>
+                    </td>
+                </tr>
+                <tr class="row">
+                    <td>&nbsp;</td>
+                    <td class="cell labelCol vfLabelColTextWrap"
+                        ng-hide="isSummary">
+                        {{::invoice.isPrinted.label}}
+                    </td>
+                    <td class="cell valueCol"
+                        ng-hide="isSummary">
+                        <boolean-field field="invoice.isPrinted"
+                            disabled="true"/>
+                    </td>
+                </tr>
+                <tr class="row">
+                    <td class="cell labelCol vfLabelColTextWrap">
+                        {{::invoice.attention.label}}
+                    </td>
+                    <td class="cell valueCol">
+                        <text-field field="invoice.attention"
+                            readonly="isSummary || invoice.isVoided || invoice.useDefaultValues.value"/>
+                    </td>
+                    <td class="cell labelCol vfLabelColTextWrap">
+                        {{::invoice.notes.label}}
+                    </td>
+                    <td class="cell valueCol"
+                        rowspan="4">
+                        <textarea-field field="invoice.notes"
+                            multiline="true"
+                            rows="9"
+                            readonly="isSummary"/>
+                    </td>
+                </tr>
+                <tr class="row">
+                    <td class="cell labelCol vfLabelColTextWrap">
+                        {{::invoice.paymentTerms.label}}
+                    </td>
+                    <td class="cell valueCol">
+                        <picklist-field field="invoice.paymentTerms"
+                            readonly="isSummary || invoice.useDefaultValues.value"
+                            sans-none="true"/>
+                    </td>
+                </tr>
+                <tr class="row">
+                    <td class="cell labelCol vfLabelColTextWrap">
+                        {{::invoice.invoiceTemplate.label}}
+                    </td>
+                    <td class="cell valueCol">
+                        <picklist-field field="invoice.invoiceTemplate"
+                            readonly="isSummary || invoice.useDefaultValues.value"
+                            sans-none="true"/>
+                    </td>
+                </tr>
+                <tr class="row">
+                    <td>&nbsp;</td>
+                </tr>
+                <tr class="row">
+                    <td>&nbsp;</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>

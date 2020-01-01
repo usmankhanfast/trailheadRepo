@@ -1,0 +1,169 @@
+<apex:page controller="QuickbookConnection" action="{!doFetchAccessToken}" lightningStylesheets="true">
+    <apex:slds />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+    </script>
+    
+    <style>
+        #col1{
+        display:inline-block !important;
+        float:none;
+        width:49%;
+        vertical-align: top;
+        }
+        #col2{
+        display:inline-block !important;
+        float:none;
+        width:49%;
+        vertical-align: top;
+        }
+        .mainDiv{
+        padding-top: 2rem;
+        
+        }
+        .IconColour{
+        background-color: #6da1ea !important;
+        }
+    </style>
+    
+    <script>
+    function Clicked(item){
+        var id = item.id;
+        if(id == "tab1"){
+            $("#tablist2").removeClass("slds-is-active");
+            $("#tablist1").addClass("slds-is-active");
+            $("#tabView1").addClass("slds-show");
+            $("#tabView1").removeClass("slds-hide");
+            $("#tabView2").addClass("slds-hide");
+            $("#tabView2").removeClass("slds-show");
+            active = "tab1";
+        }else if(id == "tab2"){
+            $("#tablist1").removeClass("slds-is-active");
+            $("#tablist2").addClass("slds-is-active");
+            $("#tabView2").addClass("slds-show");
+            $("#tabView2").removeClass("slds-hide");
+            $("#tabView1").addClass("slds-hide");
+            $("#tabView1").removeClass("slds-show");
+            active = "tab2";
+        }
+        
+    }
+    function setActiveTab(){
+        setTab(active);
+    }
+    var opened1 = true;
+    function openSection1()
+    {
+        console.log("called");
+        
+        opened1?$('#sectionOneOpen').removeClass('slds-is-open'):$('#sectionOneOpen').addClass('slds-is-open');
+        opened1 = !opened1;
+    }
+    var opened2 = true;
+    function openSection2()
+    {
+        console.log("called");
+        
+        opened2?$('#sectiontTwoOpen').removeClass('slds-is-open'):$('#sectiontTwoOpen').addClass('slds-is-open');
+        opened2 = !opened2;
+    }
+    var opened3 = true;
+    function openSection3()
+    {
+        console.log("called");
+        
+        opened3?$('#sectionThreeOpen').removeClass('slds-is-open'):$('#sectionThreeOpen').addClass('slds-is-open');
+        opened3 = !opened3;
+    }
+    var opened4 = true;
+    function openSection4()
+    {
+        console.log("called");
+        
+        opened4?$('#sectiontFourOpen').removeClass('slds-is-open'):$('#sectiontFourOpen').addClass('slds-is-open');
+        opened4 = !opened4;
+    }
+    var opened5 = true;
+    function openSection5()
+    {
+        console.log("called");
+        
+        opened5?$('#sectionFiveOpen').removeClass('slds-is-open'):$('#sectionFiveOpen').addClass('slds-is-open');
+        opened5 = !opened5;
+    }
+    
+    var opened6 = true;
+    function openSection6()
+    {
+        opened6?$('#CredentialsSection').removeClass('slds-is-open'):$('#CredentialsSection').addClass('slds-is-open');
+        opened6 = !opened6;
+    }
+    </script>
+    <apex:form >
+        
+        <div class="slds-tabs_default mainDiv">
+            <ul class="slds-tabs_default__nav" role="tablist">
+                
+                <li class="slds-tabs_default__item slds-is-active" title="Item One" role="presentation" id="tablist1">
+                    <p class="slds-tabs_default__link" onclick="Clicked(this);" role="tab" id="tab1">Quickbook Authorization</p>
+                </li>
+                
+            </ul>
+            
+            
+            <div id="tabView1" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab1">
+                <apex:outputPanel id="t1s1">
+                    <div align="center">
+                        <div >
+                            <div class="slds-form-element">
+                                <span>
+                                    <label class="slds-form-element__label" >
+                                        <span style='color:blue'><b>Redirect URI: </b> </span>{!baseurl}
+                                    </label>
+                                </span>
+                            </div>
+                            <div class="slds-form-element">
+                                <span>
+                                    <label class="slds-form-element__label" >
+                                        <span style='color:red'><b>Note: </b> </span>Please paste this link under Custom Label 'QB_Redirect_URI' and your Quickbook Developer Application.
+                                    </label>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                </apex:outputPanel>
+                <apex:pageMessages />
+                
+                
+                <div id="sectionOneOpen" class="slds-section slds-is-open">
+                    <h3 class="slds-section__title">
+                        <button aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action" onclick="openSection1();return false;">
+                            <svg class="slds-section__title-action-icon slds-button__icon slds-button__icon_left" aria-hidden="true">
+                                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#switch" />
+                            </svg>
+                            <span class="slds-truncate" title="Section Title">Authorization Settings</span>
+                        </button>
+                    </h3>
+                    <div aria-hidden="false" class="slds-section__content" id="expando-unique-id">
+                        <apex:outputPanel id="t1s3">
+                            <div>
+                                <div id="col1">
+                                    <div style="padding-left: 2rem;">
+                                        <div class="slds-form-element">
+                                            <apex:image height="25" width="25" value="{!URLFOR($Resource.DonePendingStatus,'QB/pending.png')}" rendered="{!QbCred == null}"/>
+                                            <apex:image height="25" width="25" value="{!URLFOR($Resource.DonePendingStatus,'QB/done.png')}" rendered="{!QbCred != null}"/>
+                                            <apex:commandLink value="Authorize Quickbooks" action="{!doAuthorizationQuickBooks}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </apex:outputPanel>
+                    </div><br/>
+                    
+                </div>
+                
+                <br/><br/>
+            </div>
+        </div>
+    </apex:form>
+</apex:page>

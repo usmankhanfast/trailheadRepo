@@ -1,0 +1,37 @@
+@import 'spinner';
+
+fieldset {
+    border: none;
+}
+
+.pageButtons {
+    text-align: center;
+}
+
+.table {
+    display: table;
+
+    .row {
+        display: table-row;
+        height: 24px;
+
+        .field-label {
+            display: table-cell;
+            min-width: 200px;
+            padding: 0 5px;
+            vertical-align: middle;
+        }
+
+        .field-value {
+            @extend .field-label;
+            min-width: 280px;
+        }
+    }
+}
+
+.section-header {
+    background-image: url('/img/alohaSkin/opacity75.png');
+    color: #000;
+    padding: 4px 16px;
+    margin: 15px 0 5px;
+}

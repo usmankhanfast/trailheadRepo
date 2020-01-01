@@ -1,0 +1,146 @@
+<table class="invoice section">
+    <tr class="row">
+        <td class="cell linkCol">
+            <div>
+                <a class="text-link"
+                    ng-click="copyInvoice($index+1, invoice)">
+                    Copy
+                </a>
+                <span ng-hide="isSummary || appName == 'editInvoices' && !isComp"> | </span>
+                <a class="text-link"
+                    ng-hide="appName == 'editInvoices' && !isComp"
+                    ng-click="convertInvoice(invoice)">
+                    Convert
+                </a>
+                <span ng-hide="isSummary"> | </span>
+                <a class="text-link"
+                    ng-click="deleteInvoice(invoice)">
+                    Delete
+                </a>
+            </div>
+        </td>
+        <td class="cell labelCol vfLabelColTextWrap">
+            {{::invoice.invoiceUrl.label}}
+        </td>
+        <td class="cell valueCol">
+            <text-field field="invoice.invoiceUrl"
+                        readonly="true"
+        </td>
+        <td class="cell labelCol vfLabelColTextWrap">
+            {{::invoice.proformaAmount.label}}
+        </td>
+        <td class="cell valueCol">
+            <text-field field="invoice.proformaAmount"
+                readonly="isSummary"
+                precision="2"/>
+        </td>
+    </tr>
+    <tr class="row">
+        <td class="cell linkCol"></td>
+        <td class="cell labelCol vfLabelColTextWrap">
+            {{::invoice.aptoBillTo.label}}
+        </td>
+        <td class="cell valueCol">
+            <lookup-field field="invoice.aptoBillTo"
+                          readonly="isSummary"
+                          on-field-change="setInvoiceBillToAddressFromAccount(invoice, invoice.aptoBillTo.value)"/>
+        </td>
+        <td class="cell labelCol vfLabelColTextWrap">
+            {{::invoice.trustAmount.label}}
+        </td>
+        <td class="cell valueCol">
+            <text-field field="invoice.trustAmount"
+                readonly="isSummary"
+                precision="2"/>
+        </td>
+    </tr>
+    <tr class="row">
+        <td class="cell linkCol"></td>
+        <td class="cell labelCol vfLabelColTextWrap addressLabel2">
+            {{::invoice.billToAddress.label}}
+        </td>
+        <td class="cell valueCol"
+            rowspan="2">
+            <textarea-field field="invoice.billToAddress"
+                            multiline="true"/>
+        </td>
+        <td class="cell labelCol vfLabelColTextWrap">
+            {{::invoice.taxGroup.label}}
+        </td>
+        <td class="cell valueCol">
+             <picklist-field field="invoice.taxGroup" disabled="enableTaxGroup(invoice)" readonly="isSummary || invoice.isVoided"/>
+        </td>
+    </tr>
+    <tr class="row">
+        <td class="cell linkCol"></td>
+        <td class="cell emptyCell labelCol vfLabelColTextWrap">
+            &nbsp;
+        </td>
+        <td class="cell labelCol vfLabelColTextWrap">
+            {{::invoice.dueUpon.label}}
+        </td>
+        <td class="cell valueCol">
+            <picklist-field field="invoice.dueUpon"
+                readonly="isSummary"/>
+        </td>
+    </tr>
+    <tr class="row">
+        <td class="cell linkCol"></td>
+        <td class="cell labelCol vfLabelColTextWrap">
+            {{::invoice.attention.label}}
+        </td>
+        <td class="cell valueCol">
+            <text-field field="invoice.attention"
+                readonly="isSummary"/>
+        </td>
+        <td class="cell labelCol vfLabelColTextWrap">
+            Pro-Forma Date
+        </td>
+        <td class="cell valueCol">
+            <date-field field="invoice.estimatedInvoiceDate"
+                readonly="isSummary"
+                hide-today-date="true"/>
+        </td>
+    </tr>
+    <tr class="row">
+        <td class="cell linkCol"></td>
+        <td class="cell labelCol vfLabelColTextWrap">
+            {{::invoice.paymentTerms.label}}
+        </td>
+        <td class="cell valueCol">
+            <picklist-field field="invoice.paymentTerms"
+                readonly="isSummary"
+                sans-none="true"/>
+        </td>
+        <td class="cell labelCol vfLabelColTextWrap">
+            {{::invoice.notes.label}}
+        </td>
+        <td class="cell valueCol"
+            rowspan="5">
+            <textarea-field field="invoice.notes"
+                multiline="true"
+                rows="9"
+                readonly="isSummary"/>
+        </td>
+    </tr>
+    <tr class="row">
+        <td class="cell linkCol"></td>
+        <td class="cell labelCol vfLabelColTextWrap">
+            {{::invoice.invoiceTemplate.label}}
+        </td>
+        <td class="cell valueCol">
+            <picklist-field field="invoice.invoiceTemplate"
+                readonly="isSummary"
+                sans-none="true"/>
+        </td>
+    </tr>
+    <tr class="row">
+        <td class="cell linkCol">&nbsp;</td>
+    </tr>
+    <tr class="row">
+        <td class="cell linkCol">&nbsp;</td>
+    </tr>
+    <tr class="row">
+        <td class="cell linkCol">&nbsp;</td>
+    </tr>
+</table>

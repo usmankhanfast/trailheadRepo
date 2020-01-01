@@ -1,0 +1,20 @@
+<div class="help" ng-if="hideHelp != 'true'" ng-hide="hideHelp || isSummary">
+    <ng-include="getTemplate('helpIcon')"/>
+</div>
+<div class="aptoField"
+    ng-class="{requiredInput: field.isRequired}"
+    ng-hide="readonly">
+    <div class="requiredBlock"
+        ng-if="field.isRequired">
+    </div>
+    <input type="text"
+        ng-class="{'alignRight': alignRight}"
+        id="{{::baseId}}"
+        ng-disabled="disabled"
+        ng-model="field.value"
+        ng-blur="onBlur()"
+        restrict-decimals="2"/>
+</div>
+<currency-output ng-show="readonly"
+    field="field"
+    hide-help="true"/>

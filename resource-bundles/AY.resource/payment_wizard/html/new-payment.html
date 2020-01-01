@@ -1,0 +1,327 @@
+<div style="width:100%;">
+
+    <div style="width:100%;">
+        <div style="width:100%;">
+            <h2>{{labels.billingInfo}}</h2>
+            <hr />
+        </div>
+        <div class="section">
+            <div class="row">
+                <div class="cell labelCol vfLabelColTextWrap">
+                    {{billToCompany.label}}
+                </div>
+                <div class="cell valueCol">
+                    <lookup-field field="billToCompany" readonly="invoiceId"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="cell labelCol vfLabelColTextWrap">
+                    {{accountingSubsidiary.label}}
+                </div>
+                <div class="cell valueCol">
+                    <lookup-field field="accountingSubsidiary"
+                                  readonly="invoiceId"
+                                  />
+                </div>
+            </div>
+            <div class="row">
+                <div class="cell labelCol vfLabelColTextWrap">
+                    {{nsBillTo.label}}
+                </div>
+                <div class="cell valueCol">
+                    <netsuite-search-field field="nsBillTo"
+                                            endpoint="getNetSuiteData.getCustomers"
+                                            broker-id="accountingSubsidiary.value"
+                                            require-broker="true"
+                                            require-broker-msg="Unknown Subsidiary - Does account have a Parent NetSuite ID?"
+                                            on-field-change="setBillToAddressFromNetsuite();"
+                                            readonly="invoiceId"
+                                            />
+                </div>
+            </div>
+            <div class="row">
+                <div class="cell labelCol vfLabelColTextWrap">
+                    {{currencyIsoCode.label}}
+                </div>
+                <div class="cell valueCol">
+                    <picklist-field hide-help="false"
+                                    field="currencyIsoCode"
+                                    readonly="invoiceId"
+                                    />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="width:100%;">
+        <h2>
+            {{labels.existingPayments}}
+        </h2>
+        <hr />
+        <div class="section">
+            <span>
+                {{labels.paymentDescription}}
+            </span>
+            <div class="table-wrap"
+                 style="padding-top:8px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>
+                                {{name.label}}
+                            </th>
+                            <th>
+                                {{paymentType.label}}
+                            </th>
+                            <th>
+                                {{paymentDate.label}}
+                            </th>
+                            <th>
+                                {{memo.label}}
+                            </th>
+                            <th>
+                                {{depositScannerId.label}}
+                            </th>
+                            <th>
+                                {{checkEFTNumber.label}}
+                            </th>
+                            <th style="text-align:right;">
+                                {{paymentAmount.label}}
+                            </th>
+                            <th style="text-align:right;">
+                                {{creditAmount.label}}*
+                            </th>
+                            <th>
+                               {{labels.action}}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="result in relatedPayments">
+                            <td title="{{result.name.value}}">
+                                <span ng-bind="result.name.value"/>
+                            </td>
+                            <td title="{{result.paymentType.value}}">
+                                <span ng-bind="result.paymentType.value"/>
+                            </td>
+                            <td>
+                                {{result.paymentDate.value}}
+                            </td>
+                            <td >
+                            <text-field field="result.memo"
+                                            readonly="true"
+                                            hide-help="true" />
+                            </td>
+                            <td>
+                                <text-field field="result.depositScannerId"
+                                                readonly="true"
+                                                hide-help="true" />
+                            </td>
+                            <td>
+                                <text-field field="result.checkEFTNumber"
+                                                readonly="true"
+                                                hide-help="true" />
+                            </td>
+                            <td style="text-align:right;">
+                                <currency-output hide-help="true"
+                                                 field="result.paymentAmount" />
+                            </td>
+                            <td style="text-align:right;">
+                                <currency-output hide-help="true"
+                                                 field="result.nsBalance" />
+                            </td>
+                            <td>
+                                <a ng-click="queryBalance(result)" ng-if="isApprovedDeal">
+                                    {{labels.applyToInvoice}} &raquo;
+                                </a>
+                            </td>
+                        </tr>
+                        <tr ng-if="editingNewPayment" class="new-row" ng-class="{'sub-row': paymentType.value === 'Write-Off'}">
+                            <td>
+                            </td>
+                            <td>
+                                <picklist-field
+                                          hide-help="true"
+                                          field="paymentType"
+                                ></picklist-field>
+                            </td>
+                            <td>
+                                <date-field field="paymentDate"
+                                            hide-help="true"
+                                            placeholder="DD/MM/YYYY"
+                                ></date-field>
+                            </td>
+                            <td>
+                                <text-field field="memo" hide-help="true"
+                                            placeholder="{{memo.label}}"
+                                ></text-field>
+                            </td>
+                            <td>
+                                <text-field hide-help="true"
+                                            field="depositScannerId"
+                                            placeholder="{{depositScannerId.label}}"
+                                            placeholder="Deposit Scanner Id"/>
+                            </td>
+                            <td>
+                                <text-field hide-help="true"
+                                            field="checkEFTNumber"
+                                            placeholder="{{checkEFTNumber.label}}"
+                                            placeholder="Deposit Scanner Id"/>
+                            </td>
+                            <td style="text-align:right;">
+                                <currency-field field="paymentAmount"
+                                                align-right="true"
+                                                hide-help="true"
+                                                placeholder="{{paymentAmount.label}}"
+                                                precision="2"/>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                                <a ng-click="save();">
+                                    {{labels.save}}
+                                </a>
+                                |
+                                <a ng-click="toggleEditingNewPayment()">
+                                    {{labels.cancel}}
+                                </a>
+                            </td>
+                        </tr>
+                        <tr ng-if="editingNewPayment && paymentType.value === 'Write-Off'">
+                            <td colspan="5">
+                                <picklist-field
+                                        field="writeOffReason"
+                                        hide-help="true"
+                                        show-label="true"
+                                        required-field="true"
+                                ></picklist-field>
+                            </td>
+                            <td colspan="4">
+                                <text-field
+                                        field="writeOffExplanation"
+                                        hide-help="true"
+                                        show-label="true"
+                                ></text-field>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <thead>
+                        <tr>
+                            <th colspan="9">
+                                <a ng-click="toggleEditingNewPayment();"
+                                    ng-if="!editingNewPayment && isApprovedDeal">
+                                    {{labels.addPayment}}
+                                </a>
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+                    <span>
+                        {{labels.paymentDisclaimer}}
+                    </span>
+            </div>
+        </div>
+    </div>
+    <div class="progressModal" ng-show="isProcessing">
+        <div class="modal overlay">
+            <div class="modalContainer">
+                <div class="closeButton" ng-show="syncDone || errorMessage">
+                    <a ng-click="closeModal();">
+                        <img ng-src="{{imgLocation}}/Close.png"
+                            alt="Close"
+                            title="Close" />
+                    </a>
+                </div>
+                <div class="title">
+                    <div class="center inline-block">
+                        <span>
+                            {{labels.syncPayment}}
+                        </span>
+                    </div>
+                </div>
+                <div ng-hide="errorMessage == null" class="notification error">
+                    <p ng-bind-html="errorMessage"/>
+                </div>
+                <div class="resultsLabel">
+                    {{syncPayment}}
+                </div>
+                <div class="resultsLabel" ng-if="!errorMessage">
+                    {{batchStatus}}
+                </div>
+                <div class="center inline-block" ng-if="!errorMessage">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: {{ totalProgress }}%" />
+                    </div>
+                </div>
+                <div class="resultsLabel" ng-if="lastStatus && lastStatus !== 'Unknown' && process === 'Status Check'">
+                    {{lastStatus}}
+                </div>
+                <div class="resultsLabel" ng-if="lastStatus && lastStatus !== 'Unknown' && process === 'Status Check'">
+                    {{labels.syncFailedStatus}}
+                </div>
+                <div class="resultsLabel" ng-if="totalProgress === 100 && process === 'Query' && !workingPayment.paymentAmount">
+                    {{labels.syncFailedStatus}}
+                </div>
+                <div class="resultsLabel" ng-if="totalProgress !== 100 && process === 'Status Check'">
+                    {{labels.syncMessage}}
+                </div>
+                <div class="resultsLabel" ng-if="totalprogress === 100 && process === 'Status Check'">
+                    {{labels.syncSuccess}}
+                </div>
+                <div class="resultsLabel" ng-if="aborted">
+                    {{labels.syncFailedStatus}}
+                </div>
+                <div class="resultsLabel" ng-if="process === 'Query' && totalProgress === 100 && workingPayment.paymentAmount">
+                    {{labels.balanceChanged}}
+                    <br/>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <th>
+                                    {{labels.previousBalance}}
+                                </th>
+                                <th>
+                                    <currency-field field="lastBalance" hide-help="true" readonly="true" precision="2"></currency-field>&nbsp;
+                                    {{currencyIsoCode.value}}
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>
+                                    {{labels.newBalance}}
+                                </th>
+                                <th>
+                                    <currency-field field="workingPayment.nsBalance" hide-help="true" readonly="true" precision="2"></currency-field>&nbsp;
+                                    {{currencyIsoCode.value}}
+                                </th>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br/>
+                    <div ng-if="workingPayment.nsBalance.value > 0"/>
+                        {{labels.wishToApply}}
+                    </div>
+                </div>
+                <div class="buttons-container" ng-if="process === 'Query' && totalProgress === 100 && workingPayment.paymentAmount">
+                    <input type="button"
+                           class="button"
+                           value="{{labels.applyToInvoice}}"
+                           ng-click="queryBalance(workingPayment);"
+                           ng-if="workingPayment.nsBalance.value > 0"
+                           />
+                    <input type="button"
+                           class="button"
+                           value="{{labels.cancel}}"
+                           ng-click="closeModal();"
+                           ng-if="workingPayment.nsBalance.value > 0"
+                           />
+                    <input type="button"
+                           class="button"
+                           value="{{labels.cancel}}"
+                           ng-click="reloadPage();"
+                           ng-if="workingPayment.nsBalance.value === 0"
+                           />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

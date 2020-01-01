@@ -1,0 +1,3 @@
+<apex:page standardController="Project__c" recordSetVar="records" extensions="lexController" action="{!callFunction}">
+    
+</apex:page>

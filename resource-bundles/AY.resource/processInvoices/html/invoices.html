@@ -1,0 +1,197 @@
+<div id="invoicesWrapper">
+    <div class="section-header">
+        <h1 class="header">{{selectedPageLabel}}</h1>
+    </div>
+    <h2>{{::labels.searchFilters}}</h2>
+    <div ng-if="!isPrintMode" style="float:right;">
+        <a ng-click="convertToPrintMode(subsidiarySelected.Name, 'true');">Print</a>
+    </div>
+    <div ng-if="isPrintMode" style="float:right;">
+        <a ng-click="convertToPrintMode(subsidiarySelected.Name, 'false');">Return</a>
+    </div>
+    <hr>
+    <div class="section">
+        <div class="row">
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::startDate.label}}
+            </div>
+            <div class="cell valueCol">
+                <date-field readonly="isPrintMode" field="startDate"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::endDate.label}}
+            </div>
+            <div class="cell valueCol">
+                <date-field readonly="isPrintMode" field="endDate"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="cell labelCol vfLabelColTextWrap">
+                {{::subsidiary.label}}
+            </div>
+            <div class="cell valueCol">
+                <div class="aptoField">
+                    <span ng-show="isPrintMode">{{subsidiarySelected.Name}}</span>
+                    <input type="text"
+                           ng-hide="isPrintMode"
+                           ng-model="subsidiarySelected.Name"
+                           placeholder="Search Subsidiary"
+                           uib-typeahead="account.Name as account.Name for account in searchAccounts($viewValue)"
+                           typeahead-loading="loadingLocations"
+                           class="form-control"
+                           style="margin-left:13px; min-width:250px;">
+                    <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="buttons-container search-button">
+        <button type="button" class="button searchButton" ng-click="searchInvoices(startDate.value, endDate.value, subsidiarySelected.Name)" ng-if="!isPrintMode">Search</button>
+    </div>
+    <ul class="clearfix inovices-navigation" ng-if="!isPrintMode">
+        <li ng-class="{'active': page == 'INVOICE_DATES'}">
+            <a ng-click="navigateTo('INVOICE_DATES');">
+                {{::labels.invoiceDates}} ({{invoiceDatesCount}})
+            </a>
+        </li>
+        <li ng-class="{'active': page == 'REVENUE_RECOGNITION'}">
+            <a ng-click="navigateTo('REVENUE_RECOGNITION');">
+                {{::labels.revenueRecognition}} ({{revenueRecognitionCount}})
+            </a>
+        </li>
+        <li ng-class="{'active': page == 'PRINT_INVOICES'}">
+            <a ng-click="navigateTo('PRINT_INVOICES');">
+                {{::labels.printInvoices}} ({{printInvoicesCount}})
+            </a>
+        </li>
+        <li ng-class="{'active': page == 'REPRINT_INVOICES'}">
+            <a ng-click="navigateTo('REPRINT_INVOICES');">
+                {{::labels.rePrintInvoices}} ({{rePrintInvoicesCount}})
+            </a>
+        </li>
+    </ul>
+    <div ng-show="invoices.length == 0" class="notification error">
+        No Invoices Found
+    </div>
+    <div ng-hide="invoices.length == 0" class="section">
+        <div class="buttons-container">
+            <button type="button" ng-if="(page != 'PRINT_INVOICES' && page != 'REPRINT_INVOICES') && !isPrintMode" class="button saveButton" ng-click="save(subsidiarySelected.Name)">Save</button>
+            <button ng-if="(page == 'PRINT_INVOICES' || page == 'REPRINT_INVOICES') && !isPrintMode" type="button" class="button printButton" ng-click="print()">Print Selected</button>
+        </div>
+        <nav class="pagination-align-right" ng-if="!isPrintMode && invoices.length > 0 && totalInvoices.value > invoicesPerPage" aria-label="Invoice Page Navigation">
+            <ul uib-pagination total-items="totalInvoices.value" boundary-link-numbers="true" max-size="maxPages" items-per-page="invoicesPerPage" ng-model="currentPage.value" ng-change="pageChanged()"></ul>
+        </nav>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th ng-if="!isPrintMode">
+                            Sync Status
+                        </th>
+                        <th ng-if="(page == 'PRINT_INVOICES' || page == 'REPRINT_INVOICES') && !isPrintMode">Action</th>
+                        <th ng-if="page == 'PRINT_INVOICES' || page == 'REPRINT_INVOICES'">
+                            <a ng-click="order('McLabs2__Invoice_Template__c')" ng-class="getSortClass('McLabs2__Invoice_Template__c')">Template</a>
+                        </th>
+                        <th>
+                            <a ng-click="order('Invoice_Number__c')" ng-class="getSortClass('Invoice_Number__c')">{{invoices[0].invoiceNumber.label}}</a>
+                        </th>
+                        <th>
+                            <a ng-click="order('Deal_Id__c')" ng-class="getSortClass('Deal_Id__c')">{{invoices[0].dealId.label}}</a>
+                        </th>
+                        <th>
+                            <a ng-click="order('McLabs2__Comp__r.Name')" ng-class="getSortClass('McLabs2__Comp__r.Name')">{{invoices[0].dealName.label}}</a>
+                        </th>
+                        <th>
+                            <a ng-click="order('Netsuite_Bill_To_Name__c')" ng-class="getSortClass('Netsuite_Bill_To_Name__c')">{{invoices[0].nsBillTo.label}}</a>
+                        </th>
+                        <th>
+                            <a ng-click="order('Total__c')" ng-class="getSortClass('Total__c')">Total Invoice</a>
+                        </th>
+                        <th ng-if="page != 'PRINT_INVOICES' && page != 'REPRINT_INVOICES'">
+                            <a ng-click="order('Estimated_Invoice_Date__c')" ng-class="getSortClass('Estimated_Invoice_Date__c')">{{invoices[0].estimatedInvoiceDate.label}}</a>
+                        </th>
+                        <th ng-if="page != 'PRINT_INVOICES' && page != 'REPRINT_INVOICES'"></th>
+                        <th>
+                            <a ng-click="order('Specific_Invoice_Date__c')" ng-class="getSortClass('Specific_Invoice_Date__c')">{{invoices[0].specificInvoiceDate.label}}</a>
+                        </th>
+                        <th>
+                            <a ng-click="order('Revenue_Can_Be_Recognized__c')" ng-class="getSortClass('Revenue_Can_Be_Recognized__c')">{{invoices[0].recognizeRevenue.label}}</a>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="hide-help">
+                    <tr ng-repeat="invoice in invoices" ng-class="{'locked-invoice': !invoice.canUpdate}">
+                        <td class="status-column" ng-if="!isPrintMode">
+                            <img ng-src="{{invoice.statusUri}}" alt="" title="{{invoice.error}}"/>
+                        </td>
+                        <td ng-if="page == 'PRINT_INVOICES' && !isPrintMode">
+                            <input type="checkbox" ng-model="invoice.readyForPrint" ng-hide="invoice.validationErrors.length > 0 || !invoice.canUpdate || invoice.isPrinted.value === true || invoice.isPrinted.value === 'true'">
+                            <span id="{{::invoice.id}}-_help" class="helpButton">
+                                <img class="helpOrb" alt="help" src="/s.gif" ng-show="invoice.validationErrors.length > 0" ng-mouseover="showErrors(invoice)">
+                            </span>
+                        </td>
+                        <td ng-if="page == 'REPRINT_INVOICES' && !isPrintMode">
+                            <input type="checkbox" ng-model="invoice.readyForPrint" ng-hide="invoice.validationErrors.length > 0 || !invoice.canUpdate">
+                            <span id="{{::invoice.id}}-_help" class="helpButton">
+                                <img class="helpOrb" alt="help" src="/s.gif" ng-show="invoice.validationErrors.length > 0" ng-mouseover="showErrors(invoice)">
+                            </span>
+                        </td>
+                        <td ng-if="page == 'PRINT_INVOICES' || page == 'REPRINT_INVOICES'">
+                            <picklist-field field="invoice.invoiceTemplate" readonly="isPrintMode || !invoice.canUpdate"/>
+                        </td>
+                        <td>
+                            <a href="/{{::invoice.id}}" target="_blank">{{invoice.invoiceNumber.value}}</a>
+                        </td>
+                        <td>
+                            <text-output field="invoice.dealId"/>
+                        </td>
+                        <td class="wrapCol">
+                            <text-output field="invoice.dealName"/>
+                        </td>
+                        <td>
+                            <text-output field="invoice.nsBillTo"/>
+                        </td>
+                        <td>
+                            <currency-output field="invoice.total"/>
+                        </td>
+                        <td ng-if="page != 'PRINT_INVOICES' && page != 'REPRINT_INVOICES'">
+                            <date-field field="invoice.estimatedInvoiceDate"
+                                        required="false"
+                                        hide-help="true"
+                                        readonly="isPrintMode || !invoice.canUpdate"
+                                        ng-hide="invoice.dateDirection == '<-'"
+                                        hide-today-date="true"/>
+                        </td>
+                        <td ng-if="page != 'PRINT_INVOICES' && page != 'REPRINT_INVOICES'">
+                            <input type="button"
+                                   class="dateValueSwitch"
+                                   value="{{invoice.dateDirection}}"
+                                   ng-click="switchDateValue(invoice)"
+                                   ng-disabled="isPrintMode || !invoice.canUpdate">
+                        </td>
+                        <td>
+                            <date-field field="invoice.specificInvoiceDate"
+                                        required="false"
+                                        hide-help="true"
+                                        readonly="page == 'PRINT_INVOICES' || isPrintMode || !invoice.canUpdate"
+                                        ng-hide="invoice.dateDirection == '->'"
+                                        hide-today-date="true"/>
+                        </td>
+                        <td align="center">
+                            <input ng-disabled="page != 'REVENUE_RECOGNITION' || isPrintMode || !invoice.canUpdate" type="checkbox" ng-model="invoice.recognizeRevenue.value" ng-true-value="'Yes'" ng-false-value="'No'">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <nav class="pagination-align-right" ng-if="!isPrintMode && invoices.length > 0 && totalInvoices.value > invoicesPerPage" aria-label="Invoice Page Navigation">
+            <ul uib-pagination total-items="totalInvoices.value" boundary-link-numbers="true" max-size="maxPages" items-per-page="invoicesPerPage" ng-model="currentPage.value" ng-change="pageChanged()"></ul>
+        </nav>
+        <div class="buttons-container">
+            <button type="button" ng-if="page != 'PRINT_INVOICES' && !isPrintMode" class="button saveButton" ng-click="save(subsidiarySelected.Name)">Save</button>
+            <button ng-if="page == 'PRINT_INVOICES' && !isPrintMode" type="button" class="button printButton" ng-click="print()">Print Selected</button>
+        </div>
+    </div>
+</div>

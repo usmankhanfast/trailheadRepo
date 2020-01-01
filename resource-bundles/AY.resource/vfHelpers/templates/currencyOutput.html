@@ -1,0 +1,10 @@
+<div class="help" ng-if="hideHelp != 'true'">
+    <ng-include="getTemplate('helpIcon')"/>
+</div>
+<div class="aptoField">
+    <span class="currency"
+        id="{{::baseId}}"
+        >
+        {{field.value | currency : field.currencySymbol}}
+    </span>
+</div>

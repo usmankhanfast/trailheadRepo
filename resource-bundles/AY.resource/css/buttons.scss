@@ -1,0 +1,98 @@
+a.button {
+    text-decoration: none;
+}
+
+.button {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: normal;
+
+    width: auto;
+    min-width: 75px;
+    height: 25px;
+    padding: 5px 15px;
+
+    cursor: pointer;
+
+    color: white;
+    border: 1px solid #007bb4;
+    border-radius: 5px;
+    background-color: #007bb4;
+    background-image: none;
+
+    &:hover {
+        text-decoration: none;
+        color: white;
+    }
+
+    &:active {
+        background-color: #255d97;
+    }
+
+    &[disabled] {
+        pointer-events: none;
+
+        border: 1px solid #ddd;
+        background-color: #ddd;
+    }
+}
+
+.cancelButton {
+    @extend .button;
+
+    color: #007bb4;
+    background-color: white;
+
+    &:hover {
+        color: #007bb4;
+    }
+
+    &:active {
+        color: #fff;
+    }
+}
+
+.approveButton {
+    @extend .button;
+
+    color: white;
+    background-color: #00A651;
+    border: 1px solid #00A651;
+
+}
+
+.rejectButton {
+    @extend .button;
+
+    color: white;
+    background-color: #ED1C24;
+    border: 1px solid #ED1C24;
+
+}
+
+.processButton {
+    @extend .button;
+
+    color: white;
+    background-color: #FF6600;
+    border: 1px solid #FF6600;
+
+}
+
+.connectWithUserButton {
+    color: white;
+    background-color: #00b437;
+}
+.print-button {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.margin10 {
+  margin: 10px;
+}
+
+.vendorFieldsAdjustment{
+    width: 20% !important;
+    text-align: left !important;
+}

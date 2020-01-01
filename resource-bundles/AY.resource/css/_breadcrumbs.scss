@@ -1,0 +1,104 @@
+$defaultBackgroundColor: #dcf2fd;
+$activeBackgroundColor: #007bb4;
+
+$defaultTextColor: #595959;
+$activeTextColor: #fff;
+
+.breadcrumb {
+    list-style: none;
+    display: inline-block;
+    font-size: 18px;
+
+    padding-left: 0;
+    padding-right: 0;
+    li {
+        float: left;
+
+        a {
+            color: $defaultTextColor;
+            display: block;
+            background: $defaultBackgroundColor;
+            text-decoration: none;
+            position: relative;
+            height: 30px;
+            line-height: 30px;
+            padding: 0 10px 0 5px;
+            text-align: center;
+            margin-right: -5px;
+
+            &:before, &:after {
+                content: "";
+                position: absolute;
+                top: 0;
+                border: 0 solid $defaultBackgroundColor;
+                border-width: 15px 10px;
+                width: 0;
+                height: 0;
+            }
+
+            &:before {
+                left: -20px;
+                border-left-color: transparent;
+            }
+
+            &:after {
+                left: 100%;
+                border-color: transparent;
+                border-left-color: $defaultBackgroundColor;
+            }
+
+            &[disabled] {
+                cursor: default;
+            }
+
+            &:hover:not([disabled]), &.active {
+                color: $activeTextColor;
+                background: $activeBackgroundColor;
+
+                &:before {
+                    border-color: $activeBackgroundColor;
+                    border-left-color: transparent;
+                }
+
+                &:after {
+                    border-left-color: $activeBackgroundColor;
+                }
+            }
+            &.rpRequired {
+                background: $missingRequiredBackgroundColor;
+                color: $defaultTextColor;
+
+                &:after {
+                    border-left-color: $missingRequiredBackgroundColor;
+                }
+
+                &:before {
+                    border-color: $missingRequiredBackgroundColor;
+                    border-left-color: transparent;
+                }
+            }
+        }
+
+        &:first-child a {
+            padding-left: 15px;
+            -moz-border-radius: 4px 0 0 4px;
+            -webkit-border-radius: 4px;
+            border-radius: 4px 0 0 4px;
+
+            &:before {
+                border: none;
+            }
+        }
+
+        &:last-child a {
+            padding-right: 15px;
+            -moz-border-radius: 0 4px 4px 0;
+            -webkit-border-radius: 0;
+            border-radius: 0 4px 4px 0;
+
+            &:after {
+                border: none;
+            }
+        }
+    }
+}

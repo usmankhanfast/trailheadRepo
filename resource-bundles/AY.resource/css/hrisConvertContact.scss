@@ -1,0 +1,41 @@
+body {
+    font-size: 12px;
+    line-height: 1;
+
+    .content {
+        padding: 0 10px;
+    }
+}
+
+a {
+    cursor: pointer;
+}
+
+li {
+    font-size: 12px;
+}
+
+.row {
+    height: 30px;
+
+    label {
+        width: 200px;
+        display: inline-block;
+        text-align: right;
+        padding-right: 5px;
+    }
+
+    img {
+        vertical-align: middle;
+        padding-left: 5px;
+    }
+
+    input {
+        min-width: 180px;
+        line-height: normal;
+    }
+}
+
+.helpBubble {
+    width: 21px;
+}

@@ -1,0 +1,30 @@
+<div class="help" ng-if="hideHelp != 'true'" ng-include="getTemplate('helpIcon')" ng-hide="hideHelp || isSummary">
+    <ng-include="getTemplate('helpIcon')"/>
+</div>
+<div class="aptoField"
+    ng-class="{requiredInput: field.isRequired}"
+    ng-hide="readonly"
+    >
+    <div class="requiredBlock" ng-if="field.isRequired"> </div>
+    <select name="{{::baseId}}"
+        ng-if="pairOptions"
+        ng-disabled="disabled"
+        ng-options="option.value as option.displayValue for option in optionsMap[optionsKey.value]"
+        ng-model="field.value"
+        ng-required="field.isRequired"
+        >
+        <option ng-if="!sansNone" value="">--None--</option>
+    </select>
+    <select name="{{::baseId}}"
+        ng-if="!pairOptions"
+        ng-disabled="disabled"
+        ng-options="::option.value as ::option.displayValue for option in $parent.field.options"
+        ng-model="field.value"
+        ng-required="field.isRequired"
+        >
+        <option ng-if="!sansNone" value="">--None--</option>
+    </select>
+</div>
+<text-output ng-show="readonly"
+    field="field"
+    hide-help="true"/>

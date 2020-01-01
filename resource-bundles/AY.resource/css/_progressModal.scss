@@ -1,0 +1,154 @@
+@-webkit-keyframes progress-bar-stripes {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 40px 0;
+    }
+}
+@-moz-keyframes progress-bar-stripes {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 40px 0;
+    }
+}
+@-ms-keyframes progress-bar-stripes {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 40px 0;
+    }
+}
+@keyframes progress-bar-stripes {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 40px 0;
+    }
+}
+
+.progressModal .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100; /* Salesforce Menu Button is 70 */
+    background-color: rgba(0,0,0,0.5); /*dim the background*/
+
+    > .modalContainer {
+        height: 200px;
+        width: 600px;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        margin-top: -100px;
+        margin-left: -200px;
+        border-radius: 5px;
+        z-index: 101;
+        background-color: white;
+        border: 1px solid #959595;
+        overflow: hidden;
+        padding: 15px 20px;
+
+        span {
+            display: inline;
+            white-space: nowrap;
+            width: auto;
+        }
+
+        .resultsLabel {
+            margin: 16px 0px;
+            word-wrap: break-word;
+        }
+
+        .progress-status {
+            display: inline-block;
+
+            margin-top: -6px;
+        }
+
+        .progress-bar-container {
+            display: inline-block;
+
+            width: 90%;
+            height: 26px;
+
+            top: 50%;
+            left: 70%;
+            margin-left: 5%;
+            margin-top: 8px;
+            margin-bottom: 8px;
+
+            border-radius: 5px;
+            background-color: #ddd;
+
+            vertical-align: middle;
+        }
+
+        .progress-bar {
+            display: inline-block;
+
+            height: inherit;
+
+            -webkit-animation: progress-bar-stripes 2s linear infinite;
+               -moz-animation: progress-bar-stripes 2s linear infinite;
+                -ms-animation: progress-bar-stripes 2s linear infinite;
+                    animation: progress-bar-stripes 2s linear infinite;
+
+            border-radius: 5px;
+            background-color: #007bb4;
+            background-image: linear-gradient(
+                45deg,
+                rgba(255,255,255,.4) 25%,
+                transparent 25%,
+                transparent 50%,
+                rgba(255,255,255,.4) 50%,
+                rgba(255,255,255,.4) 75%,
+                transparent 75%,
+                transparent);
+            background-size: 40px 40px;
+        }
+
+        .buttons-container {
+            bottom: 10px;
+            left: 0;
+            margin: 0;
+            position: absolute;
+            width: 100%;
+        }
+
+        div.closeButton {
+            top: 0px;
+            right: 0px;
+            float: right;
+            position: relative;
+            background-color: white;
+            border: none;
+            margin-right: 5px;
+            margin-top: 5px;
+            width: 20px;
+            height: 20px;
+
+            > a > img {
+                width: 18px;
+            }
+        }
+
+        .title {
+            width: inherit;
+            font-size: 18px;
+            font-weight: bold;
+            height: 21px;
+        }
+
+        .failedItems {
+            max-height: 120px;
+            overflow: auto;
+        }
+    }
+}

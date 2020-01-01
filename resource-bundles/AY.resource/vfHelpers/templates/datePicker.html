@@ -1,0 +1,25 @@
+<div class="datePicker" id="datePicker" style="display: none; left: 426px; top: 319px;">
+    <div class="dateBar">
+        <img src="/s.gif" alt="Previous Month" class="calLeft" onblur="this.className = 'calLeft';" onclick="DatePicker.datePicker.prevMonth();" onfocus="this.className = 'calLeftOn';" onmouseout="this.className = 'calLeft';" onmouseover="this.className = 'calLeftOn';" title="Previous Month"/>
+        <select id="calMonthPicker" name="calMonthPicker" title="Month">
+            <option ng-repeat="month in months" value="{{$index}}">{{month}}</option>
+        </select>
+        <img src="/s.gif" alt="Next Month" class="calRight" onblur="this.className = 'calRight';" onclick="DatePicker.datePicker.nextMonth();" onfocus="this.className = 'calRightOn';" onmouseout="this.className = 'calRight';" onmouseover="this.className = 'calRightOn';" title="Next Month"/>
+        <select id="calYearPicker" name="calYearPicker" title="Year">
+            <option ng-repeat="year in years" value="{{year}}">{{year}}</option>
+        </select>
+    </div>
+    <div class="calBody">
+        <table class="calDays" border="0" cellpadding="0" cellspacing="0" id="datePickerCalendar">
+            <tbody>
+                <tr>
+                    <th class="dayOfWeek" scope="col" ng-repeat="day in days">{{day}}</th>
+                </tr>
+                <tr ng-repeat="row in [1,2,3,4,5,6]" class="calRow" id="calRow{{row}}">
+                    <td ng-repeat="day in days" onblur="hiOff(this);" onclick="DatePicker.datePicker.selectDate(this);" onfocus="hiOn(this);" onmouseout="hiOff(this);" onmouseover="hiOn(this);"></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="buttonBar"><a href="javascript:%20void%280%29%3B" class="calToday" onclick="DatePicker.datePicker.selectDate('today');return false;">Today</a></div>
+    </div>
+</div>

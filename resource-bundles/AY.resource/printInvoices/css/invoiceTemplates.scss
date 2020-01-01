@@ -1,0 +1,75 @@
+$headerBackgroundColor: #3F4A75;
+$cellBorder: 1px solid black;
+
+body {
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+}
+
+table {
+    &.descriptionSection {
+        margin-top: 25px;
+    }
+
+    .descriptionText {
+        min-height: 100px;
+    }
+
+    .section {
+        width: 100%;
+
+        td {
+            border: $cellBorder;
+            padding: 2px 4px;
+        }
+    }
+}
+
+.contactInstructions {
+    font-style: italic;
+    padding: 15px;
+    text-align: center;
+}
+
+.header {
+    min-height: 84px;
+    width: 100%;
+
+    .logo {
+        float: left;
+
+        img {
+            height: 80px;
+        }
+    }
+
+    .text {
+        font-size: 3em;
+        text-align: right;
+        width: 100%;
+    }
+}
+
+.headerCell {
+    background-color: $headerBackgroundColor;
+    color: white;
+    font-weight: bold;
+    line-height: 16px;
+
+    &.wide {
+        width: 50%;
+    }
+
+    &.narrow {
+        width: 20%;
+    }
+}
+
+.cell {
+    width: 100%;
+    height: 100%;
+}
+
+.draft {
+    background-image: url(../images/draft.png);
+}
