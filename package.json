@@ -30,7 +30,7 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-eslint": "^19.0.0",
     "grunt-mocha-test": "^0.13.2",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.13",
     "mocha": "^3.2.0"
   }
 }
